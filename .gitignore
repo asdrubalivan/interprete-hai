@@ -50,3 +50,12 @@ coverage.xml
 # Sphinx documentation
 docs/_build/
 
+# Linux Files
+*~
+
+# VIM
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist

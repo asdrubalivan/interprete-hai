@@ -1,0 +1,17 @@
+Programa: ComparaNumeros
+Variables:
+Entero NUMERO;
+Algoritmo:
+Escribir “Introduzca un número “;
+leer NUMERO;
+SI NUMERO>0  ENTONCES
+          escribir “El número introducido es positivo”;
+SI NO
+          SI NUMERO<0 ENTONCES
+                 escribir “El número introducido es negativo”;
+          SI NO
+                 escribir “El número es cero”;
+          FINSI
+FINSI
+Finalgoritmo
+Finprograma
