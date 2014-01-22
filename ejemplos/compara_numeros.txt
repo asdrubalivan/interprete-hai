@@ -6,10 +6,10 @@ Escribir “Introduzca un número “;
 leer NUMERO;
 SI NUMERO>0  ENTONCES
           escribir “El número introducido es positivo”;
-SI NO
+Contrario
           SI NUMERO<0 ENTONCES
                  escribir “El número introducido es negativo”;
-          SI NO
+          Contrario
                  escribir “El número es cero”;
           FINSI
 FINSI
