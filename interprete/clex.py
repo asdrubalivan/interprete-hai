@@ -28,21 +28,52 @@ reserved = ('Programa',
         'Finsi',
         )
 
-t_ignore = '\t\x0c'
+t_ignore = ' \t\x0c'
 
 tokens = reserved + (
+            # Literales (Constante entero, floatante, string, ID, char)
             'ID',
             'TYPEID',
             'ICONST',
             'FCONST',
             'SCONST',
             'CCONST',
+            # Operadores (+,-,*,/,%,||,&&,!,<,<=,>,>=,==,!=)
+            'PLUS',
+            'MINUS',
+            'TIMES',
+            'DIVIDE',
+            'MOD',
+            'OR',
+            'AND',
+            'NOT',
+            'LT',
+            'LE',
+            'GT',
+            'GE',
+            'EQ',
+            'NE',
+            # Delimitadores
+            'LPAREN',
+            'RPAREN',
+            'LBRACKET',
+            'RBRACKET',
+            'LBRACE',
+            'RBRACE',
+            'COMMA',
+            'PERIOD',
+            'SEMI',
+            'COLON',
             )
 
+
+reserved_map = { }
+for r in reserved:
+    reserved_map[r.lower()] = r
+
 def t_ID(t):
-    r'[A-Z][A-Z0-9]*'
-    if t.value in reserved:
-        t.type = t.value
+    r'[A-Za-z_][\w_]*'
+    t.type = reserved_map.get(t.value,"ID")
     return t
 
 def t_NEWLINE(t):
@@ -69,6 +100,36 @@ t_COMMA            = r','
 t_PERIOD           = r'\.'
 t_SEMI             = r';'
 t_COLON            = r':'
+
+# Operadores
+
+t_PLUS = r'\+'
+t_MINUS = r'\-'
+t_TIMES = r'\*'
+t_DIVIDE = r'/'
+t_MOD = r'%'
+t_OR = r'\|\|'
+t_AND = r'\&\&'
+t_NOT = '!'
+t_LT = r'<'
+t_GT = r'>'
+t_LE = r'<='
+t_GE = r'>='
+t_EQ = r'=='
+t_NE = r'!='
+
+
+# Integer
+t_INCONST = r'\d+'
+
+# Floating
+t_FCONST = r'(\+|\-)?\d+\.\d+'
+
+# String
+t_SCONST = r'\"([^\\\n]|(\\.))*?\"'
+
+# Character
+t_CCONST = r'\'([^\\\n]|(\\.)){0,4}?\''
 
 lexer = lex.lex(optimize=1)
 if __name__=="__main__":
