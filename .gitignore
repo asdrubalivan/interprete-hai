@@ -59,3 +59,15 @@ docs/_build/
 *.un~
 Session.vim
 .netrwhist
+
+# Ninja IDE files
+*.nja
+
+# Lexers
+lexers/
+
+# Lextab
+lextab.py
+
+# Exrc
+.exrc
