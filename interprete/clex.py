@@ -64,12 +64,15 @@ tokens = reserved + (
             'PERIOD',
             'SEMI',
             'COLON',
+            #Increment / Decrement
+            'PLUSPLUS',
+            'MINUSMINUS',
             )
 
 
 reserved_map = { }
 for r in reserved:
-    reserved_map[r.lower()] = r
+    reserved_map[r] = r
 
 def t_ID(t):
     r'[A-Za-z_][\w_]*'
@@ -117,6 +120,10 @@ t_LE = r'<='
 t_GE = r'>='
 t_EQ = r'=='
 t_NE = r'!='
+
+# Increment/Decrement
+t_PLUSPLUS = r'\+\+'
+t_MINUSMINUS = r'\-\-'
 
 
 # Integer
