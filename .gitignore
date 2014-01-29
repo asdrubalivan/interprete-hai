@@ -71,3 +71,6 @@ lextab.py
 
 # Exrc
 .exrc
+
+# Out de parser
+*.out
