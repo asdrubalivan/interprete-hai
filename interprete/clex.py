@@ -68,7 +68,9 @@ tokens = reserved + (
             'PLUSPLUS',
             'MINUSMINUS',
             #Igual
-            'EQUALS'
+            'EQUALS',
+            'PLUSEQUALS',
+            'LESSEQUALS',
             )
 
 
@@ -142,6 +144,8 @@ t_CCONST = r'\'([^\\\n]|(\\.)){0,4}?\''
 
 # Equals
 t_EQUALS = r'='
+t_PLUSEQUAL = r'\+='
+t_LESSEQUAL = r'\-='
 
 lexer = lex.lex(optimize=1)
 if __name__=="__main__":
