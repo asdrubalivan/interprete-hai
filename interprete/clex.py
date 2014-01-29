@@ -137,7 +137,7 @@ t_INCONST = r'\d+'
 t_FCONST = r'(\+|\-)?\d+\.\d+'
 
 # String
-t_SCONST = r'\"([^\\\n]|(\\.))*?\"'
+t_SCONST = r'(\"([^\\\n]|(\\.))*?\")|(“([^\\\n]|(\\.))*?”)'
 
 # Character
 t_CCONST = r'\'([^\\\n]|(\\.)){0,4}?\''
