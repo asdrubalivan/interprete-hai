@@ -131,7 +131,7 @@ t_MINUSMINUS = r'\-\-'
 
 
 # Integer
-t_INCONST = r'\d+'
+t_ICONST = r'\d+'
 
 # Floating
 t_FCONST = r'(\+|\-)?\d+\.\d+'
