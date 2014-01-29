@@ -6,26 +6,26 @@
 # http://www.juanjoconti.com.ar/files/python/ply-examples/ansic/clex.py.html
 # ----------------------------------------------------------------------
 import ply.lex as lex
-reserved = ('Programa',
-        'Variables',
-        'Entero',
-        'Real',
-        'Caracter',
-        'Algoritmo',
-        'Escribir',
-        'Leer',
-        'Finprograma',
-        'Subprograma',
-        'Finsubprograma',
-        'Retorne',
-        'Repitamientras',
-        'Finrm',
-        'Hagamientras',
-        'Finhm',
-        'Si',
-        'Entonces',
-        'Contrario',
-        'Finsi',
+reserved = ('PROGRAMA',
+        'VARIABLES',
+        'ENTERO',
+        'REAL',
+        'CARACTER',
+        'ALGORITMO',
+        'ESCRIBIR',
+        'LEER',
+        'FINPROGRAMA',
+        'SUBPROGRAMA',
+        'FINSUBPROGRAMA',
+        'RETORNE',
+        'REPITAMIENTRAS',
+        'FINRM',
+        'HAGAMIENTRAS',
+        'FINHM',
+        'SI',
+        'ENTONCES',
+        'CONTRARIO',
+        'FINSI',
         )
 
 t_ignore = ' \t\x0c'
@@ -76,7 +76,7 @@ tokens = reserved + (
 
 reserved_map = { }
 for r in reserved:
-    reserved_map[r] = r
+    reserved_map[r.capitalize()] = r
 
 def t_ID(t):
     r'[A-Za-z_][\w_]*'

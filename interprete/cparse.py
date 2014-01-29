@@ -4,9 +4,14 @@ import ply.yacc as yacc
 
 tokens = clex.tokens
 
+
+# Constante
 def p_constant(t):
-    '''constant: 
+    '''constant: ICONST
+                | FCONST
+                | SCONST
     '''
+    pass
 
 
 #Vacio
@@ -18,3 +23,4 @@ def p_empty(t):
 def p_error(t):
     print("Error")
 
+yacc.yacc()
