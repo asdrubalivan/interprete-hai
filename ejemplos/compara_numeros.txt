@@ -4,14 +4,14 @@ Entero NUMERO;
 Algoritmo:
 Escribir “Introduzca un número “;
 leer NUMERO;
-SI NUMERO>0  ENTONCES
-          escribir “El número introducido es positivo”;
+Si NUMERO>0  Entonces
+          Escribir “El número introducido es positivo”;
 Contrario
-          SI NUMERO<0 ENTONCES
-                 escribir “El número introducido es negativo”;
+          Si NUMERO<0 Entonces
+                 Escribir “El número introducido es negativo”;
           Contrario
-                 escribir “El número es cero”;
-          FINSI
-FINSI
+                 Escribir “El número es cero”;
+          Finsi
+Finsi
 Finalgoritmo
 Finprograma
