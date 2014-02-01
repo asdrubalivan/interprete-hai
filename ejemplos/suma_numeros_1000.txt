@@ -14,6 +14,6 @@ Entero I,RET_VAL;
 Algoritmo:
 Repitapara I=1,1000,1:
     RET_VAL += I;
-Finrepitapara
+Finrp
 Retorne RET_VAL;
 Finsubprograma
