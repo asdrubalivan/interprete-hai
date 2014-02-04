@@ -132,9 +132,19 @@ t_PLUSPLUS = r'\+\+'
 t_MINUSMINUS = r'\-\-'
 
 
+#Float
+
+def t_FCONST(t):
+    r'\d+\.\d+'
+    t.value = float(t.value)
+    return t
+
 # Integer
 
-t_ICONST = r'\d+'
+def t_ICONST(t):
+    r'\d+'
+    t.value = int(t.value)
+    return t
 
 
 
