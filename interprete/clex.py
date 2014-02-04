@@ -152,10 +152,10 @@ def t_ICONST(t):
 
 
 # String
-t_SCONST = r'(\"([^\\\n]|(\\.))*?\")|(“([^\\\n]|(\\.))*?”)'
-
-# Character
-t_CCONST = r'\'([^\\\n]|(\\.)){0,4}?\''
+def t_SCONST(t):
+    r'(\"([^\\\n]|(\\.))*?\")'
+    t.value = t.value[1:-1]
+    return t
 
 # Equals
 t_EQUALS = r'='
