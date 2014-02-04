@@ -70,12 +70,7 @@ def p_number(t):
     '''number : ICONST
              | FCONST
     '''
-    if re.compile(clex.t_ICONST).match(t[1]):
-        t[0] = int(t[1])
-    elif re.compile(clex.t_FCONST).match(t[1]):
-        t[0] = float(t[1])
-    else:
-        raise TypeError("Error parseando numero, lista {}".format(t))
+    t[0] = t[1]
 
 # Identificador de parametros
 def p_parameter_identifier(t):

@@ -133,10 +133,25 @@ t_MINUSMINUS = r'\-\-'
 
 
 # Integer
-t_ICONST = r'\d+'
+
+def t_ICONST(t):
+    r'\d+'
+    try:
+        t.value = int(t.value)
+    except ValueError:
+        print("Linea {0}: numero {1} es muy grande".format(t.lineno,t.value))
+    return t
+
 
 # Floating
-t_FCONST = r'(\+|\-)?\d+\.\d+'
+def t_FCONST(t):
+    r'\d+\.\d+'
+    try:
+        t.value = float(t.value)
+    except ValueError:
+        print("Linea {0}: numero {1} es muy grande".format(t.lineno,t.value))
+    return t
+
 
 # String
 t_SCONST = r'(\"([^\\\n]|(\\.))*?\")|(“([^\\\n]|(\\.))*?”)'
