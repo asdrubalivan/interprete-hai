@@ -63,7 +63,6 @@ tokens = reserved + (
             'LBRACE',
             'RBRACE',
             'COMMA',
-            'PERIOD',
             'SEMI',
             'COLON',
             #Increment / Decrement
@@ -106,7 +105,6 @@ t_RBRACKET         = r'\]'
 t_LBRACE           = r'\{'
 t_RBRACE           = r'\}'
 t_COMMA            = r','
-t_PERIOD           = r'\.'
 t_SEMI             = r';'
 t_COLON            = r':'
 
