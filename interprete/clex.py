@@ -6,6 +6,10 @@
 # http://www.juanjoconti.com.ar/files/python/ply-examples/ansic/clex.py.html
 # ----------------------------------------------------------------------
 import ply.lex as lex
+
+states = (
+        ('slashcomment','exclusive'),
+)
 reserved = ('PROGRAMA',
         'VARIABLES',
         'ENTERO',
@@ -90,6 +94,7 @@ def t_NEWLINE(t):
     t.lexer.lineno += t.value.count("\n")
     return t
 
+
 def t_error(t):
     print("Caracter ilegal en {}".format(t.value[0]))
     t.lexer.skip(1)
@@ -97,6 +102,19 @@ def t_error(t):
 def t_comment(t):
     r'//(.)*\n*'
     t.lexer.lineno += t.value.count("\n")
+
+def t_slashcomment(t):
+    r'/\*'
+    t.lexer.begin("slashcomment")
+
+def t_slashcomment_end(t):
+    r'\*/'
+    t.lexer.lineno += t.value.count("\n")
+    t.lexer.begin("INITIAL")
+
+def t_slashcomment_error(t):
+    t.lexer.skip(1)
+
 
 # Delimeters
 t_LPAREN           = r'\('
