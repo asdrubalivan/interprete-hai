@@ -5,6 +5,34 @@ import re
 
 tokens = clex.tokens
 
+NODE_TYPES = {
+    'REAL':'real',
+    'ENTERO':'entero',
+}
+
+precedence = (
+    ('left', 'PLUS','MINUS'),
+    ('left', 'TIMES','DIVIDE'),
+    ('left', 'POWER'),
+    ('right','UMINUS')
+)
+
+class Node:
+	def __init__(self, name, children = None, leaf = None):
+		self.name = name
+		if children == None:
+			children = []
+		self.children = children
+		self.leaf = leaf
+	
+	def __str__(self):
+		return "<%s>" % self.name
+
+	def __repr__(self):
+		return "<%s>" % self.name
+
+	def append(self, node):
+		self.children.append(node)
 
 # Variable
 # TODO cambiar "empty" por "expression". No lo hago por ahora 
@@ -33,6 +61,7 @@ def p_add_operator(t):
                    | OR
     '''
     pass
+
 
 def p_relational_operator(t):
     '''relational_operator : LT
@@ -68,9 +97,16 @@ def p_simple_expression(t):
 
 def p_number(t):
     '''number : ICONST
-             | FCONST
+              | ICONST PERIOD ICONST
     '''
-    t[0] = t[1]
+    if len(t) == 4:
+        valor = float(p[1] + "." + p[3])
+        p[0] = Node(NODE_TYPES['REAL'],None,valor)
+        p[0].typ = ("float",None)
+    else:
+        valor = int(p[1])
+        p[0] = Node(NODE_TYPES['Entero'],None,valor)
+        p[0].typ = ("int",None)
 
 # Identificador de parametros
 def p_parameter_identifier(t):
@@ -88,7 +124,7 @@ def p_constant(t):
     else:
         #Caso sign number
         if t[1] == "-":
-            t[0] = -t[2]
+            t[0] = -t[2] #Operador Unario TODO poner nodo
         elif t[1] == "+":
             t[0] = t[2]
         else:

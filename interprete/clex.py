@@ -65,6 +65,7 @@ tokens = reserved + (
             'COMMA',
             'SEMI',
             'COLON',
+            'PERIOD',
             #Increment / Decrement
             'PLUSPLUS',
             'MINUSMINUS',
@@ -107,6 +108,7 @@ t_RBRACE           = r'\}'
 t_COMMA            = r','
 t_SEMI             = r';'
 t_COLON            = r':'
+t_PERIOD           = r'\.'
 
 # Operadores
 
@@ -132,23 +134,8 @@ t_MINUSMINUS = r'\-\-'
 
 # Integer
 
-def t_ICONST(t):
-    r'\d+'
-    try:
-        t.value = int(t.value)
-    except ValueError:
-        print("Linea {0}: numero {1} es muy grande".format(t.lineno,t.value))
-    return t
+t_ICONST = r'\d+'
 
-
-# Floating
-def t_FCONST(t):
-    r'\d+\.\d+'
-    try:
-        t.value = float(t.value)
-    except ValueError:
-        print("Linea {0}: numero {1} es muy grande".format(t.lineno,t.value))
-    return t
 
 
 # String
