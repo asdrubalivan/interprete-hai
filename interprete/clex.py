@@ -134,6 +134,9 @@ t_MINUSMINUS = r'\-\-'
 
 #Float
 
+#NOTE: FCONST va antes que ICONST debido a que
+#FCONST tiene mayor precedencia
+
 def t_FCONST(t):
     r'\d+\.\d+'
     t.value = float(t.value)
