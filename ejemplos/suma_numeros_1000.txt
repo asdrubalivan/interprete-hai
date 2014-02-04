@@ -12,7 +12,7 @@ Subprograma: Entero sumaNumeros(Entero num)
 Variables
 Entero I,RET_VAL;
 Algoritmo:
-Repitapara I=1,1000,1:
+Repitapara I=1,1000.31,1:
     RET_VAL += I;
 Finrepitapara
 Retorne RET_VAL;

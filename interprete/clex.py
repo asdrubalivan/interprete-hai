@@ -69,8 +69,10 @@ tokens = reserved + (
             'MINUSMINUS',
             #Igual
             'EQUALS',
-            'PLUSEQUALS',
-            'LESSEQUALS',
+            'PLUSEQUAL',
+            'LESSEQUAL',
+            #Newline
+            'NEWLINE',
             )
 
 
@@ -104,7 +106,6 @@ t_RBRACKET         = r'\]'
 t_LBRACE           = r'\{'
 t_RBRACE           = r'\}'
 t_COMMA            = r','
-t_PERIOD           = r'\.'
 t_SEMI             = r';'
 t_COLON            = r':'
 
@@ -130,11 +131,18 @@ t_PLUSPLUS = r'\+\+'
 t_MINUSMINUS = r'\-\-'
 
 
+t_PERIOD  = r'\.'
+
+
+# Floating
+t_FCONST = r'\d+\.\d+'
+
+
 # Integer
 t_ICONST = r'\d+'
 
-# Floating
-t_FCONST = r'(\+|\-)?\d+\.\d+'
+
+#Quiero que float tenga mas precedencia sobre period
 
 # String
 t_SCONST = r'(\"([^\\\n]|(\\.))*?\")|(“([^\\\n]|(\\.))*?”)'
@@ -147,6 +155,6 @@ t_EQUALS = r'='
 t_PLUSEQUAL = r'\+='
 t_LESSEQUAL = r'\-='
 
-lexer = lex.lex(optimize=1)
+lexer = lex.lex()
 if __name__=="__main__":
     lex.runmain(lexer)
