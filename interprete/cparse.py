@@ -1,6 +1,7 @@
 import sys
 import clex
 import ply.yacc as yacc
+import re
 
 tokens = clex.tokens
 
@@ -69,7 +70,12 @@ def p_number(t):
     '''number : ICONST
              | FCONST
     '''
-    pass
+    if re.compile(clex.t_ICONST).match(t[1]):
+        t[0] = int(t[1])
+    elif re.compile(clex.t_FCONST).match(t[1]):
+        t[0] = float(t[1])
+    else:
+        raise TypeError("Error parseando numero, lista {}".format(t))
 
 # Identificador de parametros
 def p_parameter_identifier(t):
@@ -82,11 +88,20 @@ def p_constant(t):
                 | number
                 | string
     '''
-    pass
+    if len(t) < 3:
+        t[0] = t[1]
+    else:
+        #Caso sign number
+        if t[1] == "-":
+            t[0] = -t[2]
+        elif t[1] == "+":
+            t[0] = t[2]
+        else:
+            raise TypeError("Error en signo {}".format(t[1]))
 
 def p_string(t):
     '''string : SCONST'''
-    pass
+    t[0] = t[1]
 
 
 #Vacio
