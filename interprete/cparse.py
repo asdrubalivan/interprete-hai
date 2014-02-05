@@ -97,16 +97,9 @@ def p_simple_expression(t):
 
 def p_number(t):
     '''number : ICONST
-              | ICONST PERIOD ICONST
+              | FCONST
     '''
-    if len(t) == 4:
-        valor = float(p[1] + "." + p[3])
-        p[0] = Node(NODE_TYPES['REAL'],None,valor)
-        p[0].typ = ("float",None)
-    else:
-        valor = int(p[1])
-        p[0] = Node(NODE_TYPES['Entero'],None,valor)
-        p[0].typ = ("int",None)
+    pass
 
 # Identificador de parametros
 def p_parameter_identifier(t):
