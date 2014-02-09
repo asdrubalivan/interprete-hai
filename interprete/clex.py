@@ -177,8 +177,8 @@ def t_SCONST(t):
 
 # Equals
 t_EQUALS = r'='
-t_PLUSEQUAL = r'\+='
-t_LESSEQUAL = r'\-='
+t_PLUSEQUALS = r'\+='
+t_LESSEQUALS = r'\-='
 
 lexer = lex.lex(optimize=1)
 if __name__=="__main__":

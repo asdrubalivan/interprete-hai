@@ -94,6 +94,7 @@ def p_algoritmo(t):
 
 def p_listasentencias(t):
     ''' listasentencias : sentencia SEMI listasentencias
+                        | sencomp listasentencias
                         | empty
     '''
     pass
@@ -102,7 +103,6 @@ def p_sentencia(t):
     ''' sentencia : asignacion
                   | senleer
                   | senescribir
-                  | sencomp
                   | expresion
     '''
     pass

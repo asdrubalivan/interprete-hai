@@ -1,7 +1,10 @@
 Programa: EscribirFloat
 Variables: 
+Entero miVariable, miVariable2;
 Algoritmo:
 Escribir 123.34;
 Escribir "Mi nombre es Asdrubal, y estoy poniendo un Repitamientras por si acaso";
+miVariable = 3;
+miVariable2 -= 2;
 Finalgoritmo
 Finprograma

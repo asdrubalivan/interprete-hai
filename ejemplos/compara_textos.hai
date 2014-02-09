@@ -3,7 +3,7 @@ Variables:
 Entero NUMERO;
 Algoritmo:
 Escribir "Introduzca un número ";
-leer NUMERO;
+Leer NUMERO;
 Si NUMERO>0  Entonces
           Escribir "El número introducido es positivo";
 Contrario
