@@ -94,8 +94,6 @@ def t_ID(t):
 def t_NEWLINE(t):
     r'\n+'
     t.lexer.lineno += t.value.count("\n")
-    return t
-
 
 def t_error(t):
     print("Caracter ilegal en {}".format(t.value[0]))

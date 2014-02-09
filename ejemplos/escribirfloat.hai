@@ -1,5 +1,7 @@
 Programa: EscribirFloat
+Variables: 
 Algoritmo:
 Escribir 123.34;
-Escribir "Mi nombre es Asdrubal, y estoy poniendo un Repitamientras por si acaso"
+Escribir "Mi nombre es Asdrubal, y estoy poniendo un Repitamientras por si acaso";
+Finalgoritmo
 Finprograma

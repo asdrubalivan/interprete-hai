@@ -16,6 +16,13 @@ def p_programa(t):
     ''' programa : PROGRAMA COLON ID VARIABLES COLON declvariables algoritmo FINPROGRAMA '''
     pass
 
+
+def p_progvariables(t):
+    ''' progvariables : VARIABLES COLON declvariables
+                      | empty
+    '''
+    pass
+
 def p_subprogramas(t):
     ''' subprogramas : subprograma subprogramas
                      | empty
@@ -228,6 +235,10 @@ def p_optbrackets(t):
     '''
     pass
 
+def p_retorno(t):
+    ''' retorno : RETORNE idvariable SEMI
+    '''
+
 #Vacio
 def p_empty(t):
     '''empty : '''
@@ -237,4 +248,8 @@ def p_empty(t):
 def p_error(t):
     print("Error")
 
-yacc.yacc()
+yacc.yacc(debug=True,check_recursion=1,optimize=1)
+if __name__=='__main__':
+    import sys
+    txt = '\n'.join([t for t in sys.stdin])
+    yacc.parse(txt,debug=True)
