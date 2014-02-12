@@ -13,7 +13,7 @@ def p_raiz(t):
     pass
 
 def p_programa(t):
-    ''' programa : PROGRAMA COLON ID VARIABLES COLON declvariables algoritmo FINPROGRAMA '''
+    ''' programa : PROGRAMA COLON ID progvariables algoritmo FINPROGRAMA '''
     pass
 
 
@@ -30,7 +30,7 @@ def p_subprogramas(t):
     pass
 
 def p_subprograma(t):
-    ''' subprograma : SUBPROGRAMA COLON tiporetorno argssubp VARIABLES COLON declvariables algoritmo retorno FINSUBPROGRAMA '''
+    ''' subprograma : SUBPROGRAMA COLON tiporetorno argssubp progvariables algoritmo retorno FINSUBPROGRAMA '''
     pass
 
 def p_tiporetorno(t):
