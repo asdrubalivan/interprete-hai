@@ -2,8 +2,14 @@ import sys
 import clex
 import ply.yacc as yacc
 import re
+import operator
 
 tokens = clex.tokens
+
+precedence = (
+    ('left', 'PLUS', 'MINUS'),
+    ('left', 'TIMES', 'DIVIDE'),
+)
 
 def p_raiz(t):
     ''' raiz : empty
@@ -238,6 +244,7 @@ def p_optbrackets(t):
 def p_retorno(t):
     ''' retorno : RETORNE idvariable SEMI
     '''
+    pass
 
 #Vacio
 def p_empty(t):
