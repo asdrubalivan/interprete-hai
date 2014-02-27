@@ -4,7 +4,12 @@ import ply.yacc as yacc
 import re
 import operator
 
-from nodos import BinOpNodo, LlamadaFuncNodo, AsigNodo, RetornoNodo
+from utils import get_brackets_decl, delete_brackets
+
+from nodos import (BinOpNodo, LlamadaFuncNodo, AsigNodo, RetornoNodo,
+        VoidNodo, DeclaracionNodo, LeerNodo, EscribirNodo,
+        BloqueSiNodo, BloqueRmNodo, BloqueHmNodo, BloqueRpNodo,
+        NegacionNodo)
 
 tokens = clex.tokens
 
@@ -38,21 +43,25 @@ def p_subprogramas(t):
     pass
 
 def p_subprograma(t):
-    ''' subprograma : SUBPROGRAMA COLON tiporetorno ID LPAREN argssubp RPAREN progvariables algoritmo retorno FINSUBPROGRAMA '''
+    ''' subprograma : SUBPROGRAMA COLON tiporetorno ID LPAREN argssubp RPAREN progvariables algoritmosub FINSUBPROGRAMA '''
     pass
 
 def p_tiporetorno(t):
     ''' tiporetorno : tipo optbrackets
-                    | empty
     '''
-    pass
+    t[0] = DeclaracionNodo([t[1],t[2]])
+
+
+def p_tiporetorno_empty(t):
+    ''' tiporetorno : empty '''
+    t[0] = VoidNodo()
 
 def p_tipo(t):
     ''' tipo : ENTERO 
              | REAL
              | CARACTER
     '''
-    pass
+    t[0] = t[1]
 
 def p_declvariables(t):
     ''' declvariables : listadecl declvariables
@@ -62,50 +71,90 @@ def p_declvariables(t):
 
 def p_listadecl(t):
     ''' listadecl : tipo listaids SEMI '''
-    pass
-
+    if t[2]:
+        t[0] = [DeclaracionNodo([t[1],get_brackets_decl(x)],delete_brackets(x),en_declvariables=True) for x in t[2]]
+        print("T[0] es {}".format(t[0]))
 def p_listaids(t):
     ''' listaids : iddecl COMMA listaids
-                 | iddecl
     '''
-    pass
+    t[0] = [t[1]]
+    if t[3] is not None:
+        if isinstance(t[3],list):
+            t[0].extend(t[3])
+        else:
+            #STRING
+            t[0].append(t[3])
+
+def p_listaids_id(t):
+    ''' listaids : iddecl '''
+    t[0] = t[1]
 
 def p_iddecl(t):
     ''' iddecl : ID bracketsdecl
     '''
-    pass
+    temp = t[1]
+    if t[2] is not None:
+        temp += t[2]
+    t[0] = temp
+
 
 
 # IDs que se usaran dentro de los algoritmos
 # Estos incluyen ejemplo[1][a] Entre otros
+# Seran strings
 def p_idvariable(t):
     ''' idvariable : ID bracketsvar
     '''
-    pass
+    temp = t[1]
+    if t[2] is not None:
+        temp += t[2]
+    t[0] = temp
 
 def p_bracketsvar(t):
     ''' bracketsvar : LBRACKET ICONST RBRACKET bracketsvar
                     | LBRACKET ID RBRACKET bracketsvar
                     | empty
     '''
-    pass
+    if len(t) == 5:
+        t[0] = t[1] + str(t[2]) + t[3]
+        if t[4] is not None:
+            t[0] += t[4]
+
 
 def p_bracketsdecl(t):
     ''' bracketsdecl : LBRACKET ICONST RBRACKET bracketsdecl
                      | empty
     '''
-    pass
-
+    if len(t) == 5:
+        t[0] = t[1] + str(t[2]) + t[3]
+        if t[4] is not None:
+            t[0] += t[4]
 def p_algoritmo(t):
     ''' algoritmo : ALGORITMO COLON listasentencias FINALGORITMO
     '''
     pass
 
+#Algoritmo en Subprograma
+
+def p_algoritmosub(t):
+    ''' algoritmosub : ALGORITMO COLON listasentencias retorno FINALGORITMO '''
+    pass
+
 def p_listasentencias(t):
     ''' listasentencias : sentencia SEMI listasentencias
-                        | sencomp listasentencias
-                        | empty
     '''
+    t[0] = [t[1]]
+    if t[3] is not None:
+        t[0] += t[3]
+
+def p_listasentencias_sencomp(t):
+    ''' listasentencias : sencomp listasentencias '''
+    t[0] = [t[1]]
+    if t[2] is not None:
+        t[0] += t[2]
+
+def p_listasentencias_empty(t):
+    ''' listasentencias : empty '''
     pass
 
 def p_sentencia(t):
@@ -114,15 +163,15 @@ def p_sentencia(t):
                   | senescribir
                   | expresion
     '''
-    pass
+    t[0] = t[1]
 
 def p_senleer(t):
     ''' senleer : LEER iddecl '''
-    pass
+    t[0] = LeerNodo([t[2]],t[1])
 
 def p_senescribir(t):
     ''' senescribir : ESCRIBIR expresion '''
-    pass
+    t[0] = EscribirNodo([t[2]],t[1])
 
 def p_sencomp(t):
     ''' sencomp : bloquesi
@@ -130,18 +179,22 @@ def p_sencomp(t):
                 | bloquerm
                 | bloquehm
     '''
-    pass
+    t[0] = t[1]
 
 def p_bloquesi(t):
     ''' bloquesi : SI expresion ENTONCES listasentencias FINSI
-                 | SI expresion ENTONCES listasentencias CONTRARIO listasentencias FINSI
     '''
-    pass
+    t[0] = BloqueSiNodo([t[2],t[4],None])
+
+def p_bloquesi_contrario(t):
+    ''' bloquesi : SI expresion ENTONCES listasentencias CONTRARIO listasentencias FINSI
+    '''
+    t[0] = BloqueSiNodo([t[2],t[4],t[6]])
 
 def p_asignsimple(t):
     ''' asignsimple : idvariable EQUALS expresion
     '''
-    pass
+    t[0] = AsigNodo([t[1],t[3]],t[2])
 
 # Asignacion en Repita para
 # NOTE Se usa simple debido a que no
@@ -150,27 +203,27 @@ def p_asigrp(t):
     ''' asigrp : asignsimple
                | idvariable
     '''
-    pass
+    t[0] = t[1]
 
 def p_bloquerp(t):
     ''' bloquerp : REPITAPARA asigrp COMMA expresion COMMA expresion COLON listasentencias FINRP
     '''
-    pass
+    t[0] = BloqueRmNodo([t[2],t[4],t[6],t[8]])
 
 def p_bloquerm(t):
     ''' bloquerm : REPITAMIENTRAS expresion COLON listasentencias FINRM
     '''
-    pass
+    t[0] = BloqueRmNodo([t[2],t[4]])
 
 def p_bloquehm(t):
     ''' bloquehm : HAGA COLON listasentencias MIENTRAS LPAREN expresion RPAREN 
     '''
-    pass
+    t[0] = BloqueHmNodo([t[6],t[3]])
 
 def p_expresion(t):
     ''' expresion : NOT expresion
     '''
-    pass
+    t[0] = NegacionNodo([t[2]])
 
 def p_expression_paren(t):
     ''' expresion : LPAREN expresion RPAREN
@@ -199,11 +252,13 @@ def p_llamadafunc(t):
 def p_arglista(t):
     ''' arglista : expresion
     '''
-    t[0] = t[1]
+    t[0] = [t[1]]
 
 def p_arglista_listas(t):
     ''' arglista : arglista COMMA expresion '''
-    t[0].append(t[1])
+    t[0] = [t[1]]
+    if t[3] is not None:
+        t[0] += t[3]
 
 def p_arglista_empty(t):
     ''' arglista : empty '''
@@ -243,19 +298,34 @@ def p_asignador(t):
 
 def p_argssubp(t):
     ''' argssubp : paramsub
-                 | paramsub COMMA argssubp
-                 | empty
     '''
-    pass
+    t[0] = t[1]
 
+def p_argssubp_comma(t):
+    ''' argssubp : paramsub COMMA argssubp
+    '''
+    t[0] = [t[1]]
+    if t[3] is not None:
+        t[0] += t[3]
+
+def p_argssubp_empty(t):
+    ''' argssubp : empty '''
+    pass
 
 def p_paramsub(t):
     ''' paramsub : tiporetorno ID '''
-    pass
+    t[1].hoja = t[2] #Añadimos la ID
+    t[0] = [t[1]]
 
 def p_optbrackets(t):
     ''' optbrackets : LBRACKET RBRACKET optbrackets
-                    | empty
+    '''
+    t[0] = [t[1],t[2]]
+    if t[3] is not None:
+        t[0] += t[3]
+
+def p_optbrackets_empty(t):
+    ''' optbrackets : empty
     '''
     pass
 
@@ -277,8 +347,9 @@ def p_empty(t):
 def p_error(t):
     print("Error")
 
-yacc.yacc(debug=True,check_recursion=1,optimize=1)
+yacc.yacc(check_recursion=1,optimize=1,debug=True)
 if __name__=='__main__':
     import sys
+    from pprint import pprint
     txt = '\n'.join([t for t in sys.stdin])
-    yacc.parse(txt,debug=True)
+    x= yacc.parse(txt,debug=True)

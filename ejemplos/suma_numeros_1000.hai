@@ -6,14 +6,16 @@ Escribir "Introduzca un número";
 Leer NUMERO;
 VALOR = suma(NUMERO);
 Escribir "La suma es " + NUMERO;
+Finalgoritmo
 Finprograma
 
 Subprograma: Entero sumaNumeros(Entero num)
-Variables
+Variables:
 Entero I,RET_VAL;
 Algoritmo:
 Repitapara I=1,1000,1:
     RET_VAL += I;
 Finrp
 Retorne RET_VAL;
+Finalgoritmo
 Finsubprograma

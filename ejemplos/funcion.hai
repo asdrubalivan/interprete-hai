@@ -1,12 +1,12 @@
 Programa: Funcion
 Variables:
-Entero x,y;
+Entero x[4],y[34],z[1];
 Algoritmo:
 funcion();
 Finalgoritmo
 Finprograma
 
-Subprograma: funcion(Entero x,Entero y)
+Subprograma: funcion(Entero x,Entero y, Real[] hola)
 Algoritmo:
 Finalgoritmo
 Finsubprograma

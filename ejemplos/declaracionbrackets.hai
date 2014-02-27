@@ -1,0 +1,12 @@
+Programa: Declaracionbrackets
+Variables:
+Entero declaracion1[3],declaracion2[3][3];
+Algoritmo:
+Leer declaracion1[1];
+Finalgoritmo
+Finprograma
+
+Subprograma: Entero declaracion2(Entero[][][] algo)
+Algoritmo:
+Finalgoritmo
+Finsubprograma
