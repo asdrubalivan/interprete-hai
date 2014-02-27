@@ -112,5 +112,5 @@ class DeclaracionNodo(Nodo):
             temp = None
         self.tipovar = self.hijos[0] # Entero, real, flotante
         if temp:
-            self.tipovar += re.sub("\d+","",temp)
+            self.tipovar += re.sub("[A-Za-z_\d]+","",temp)
 

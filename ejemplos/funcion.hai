@@ -1,6 +1,6 @@
 Programa: Funcion
 Variables:
-Entero x[4],y[34],z[1];
+Entero x[4],y[34],z[1][3],a;
 Algoritmo:
 funcion();
 Finalgoritmo

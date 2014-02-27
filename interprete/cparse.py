@@ -4,12 +4,14 @@ import ply.yacc as yacc
 import re
 import operator
 
-from utils import get_brackets_decl, delete_brackets
+from utils import get_decl_total, delete_brackets
 
 from nodos import (BinOpNodo, LlamadaFuncNodo, AsigNodo, RetornoNodo,
         VoidNodo, DeclaracionNodo, LeerNodo, EscribirNodo,
         BloqueSiNodo, BloqueRmNodo, BloqueHmNodo, BloqueRpNodo,
         NegacionNodo)
+
+DEBUG_PARSER = False
 
 tokens = clex.tokens
 
@@ -72,8 +74,9 @@ def p_declvariables(t):
 def p_listadecl(t):
     ''' listadecl : tipo listaids SEMI '''
     if t[2]:
-        t[0] = [DeclaracionNodo([t[1],get_brackets_decl(x)],delete_brackets(x),en_declvariables=True) for x in t[2]]
-        print("T[0] es {}".format(t[0]))
+        t[0] = [DeclaracionNodo(get_decl_total(t[1],x),delete_brackets(x),en_declvariables=True) for x in t[2]]
+        print("T es : {}".format(t[0]))
+
 def p_listaids(t):
     ''' listaids : iddecl COMMA listaids
     '''
@@ -316,6 +319,7 @@ def p_paramsub(t):
     ''' paramsub : tiporetorno ID '''
     t[1].hoja = t[2] #Añadimos la ID
     t[0] = [t[1]]
+    print(t[0])
 
 def p_optbrackets(t):
     ''' optbrackets : LBRACKET RBRACKET optbrackets
@@ -347,9 +351,9 @@ def p_empty(t):
 def p_error(t):
     print("Error")
 
-yacc.yacc(check_recursion=1,optimize=1,debug=True)
+yacc.yacc(check_recursion=1,optimize=1,debug=DEBUG_PARSER)
 if __name__=='__main__':
     import sys
     from pprint import pprint
     txt = '\n'.join([t for t in sys.stdin])
-    x= yacc.parse(txt,debug=True)
+    x= yacc.parse(txt,debug=DEBUG_PARSER)
