@@ -4,6 +4,8 @@ import ply.yacc as yacc
 import re
 import operator
 
+from nodos import BinOpNodo, LlamadaFuncNodo, AsigNodo, RetornoNodo
+
 tokens = clex.tokens
 
 precedence = (
@@ -36,7 +38,7 @@ def p_subprogramas(t):
     pass
 
 def p_subprograma(t):
-    ''' subprograma : SUBPROGRAMA COLON tiporetorno argssubp progvariables algoritmo retorno FINSUBPROGRAMA '''
+    ''' subprograma : SUBPROGRAMA COLON tiporetorno ID LPAREN argssubp RPAREN progvariables algoritmo retorno FINSUBPROGRAMA '''
     pass
 
 def p_tiporetorno(t):
@@ -95,7 +97,8 @@ def p_bracketsdecl(t):
     pass
 
 def p_algoritmo(t):
-    ''' algoritmo : ALGORITMO COLON listasentencias FINALGORITMO'''
+    ''' algoritmo : ALGORITMO COLON listasentencias FINALGORITMO
+    '''
     pass
 
 def p_listasentencias(t):
@@ -165,36 +168,50 @@ def p_bloquehm(t):
     pass
 
 def p_expresion(t):
-    ''' expresion : literal
-                  | llamadafunc
-                  | operacionbin
-                  | LPAREN expresion RPAREN
-                  | idvariable
-                  | NOT expresion
+    ''' expresion : NOT expresion
     '''
     pass
+
+def p_expression_paren(t):
+    ''' expresion : LPAREN expresion RPAREN
+    '''
+    t[0] = t[2]
+
+def p_expression_unvalor(t):
+    ''' expresion : literal
+                  | idvariable
+                  | llamadafunc
+                  | operacionbin
+    '''
+    t[0] = t[1]
 
 def p_literal(t):
     ''' literal : ICONST
                 | FCONST
                 | SCONST
     '''
-    pass
+    t[0] = t[1]
 
 def p_llamadafunc(t):
     ''' llamadafunc : ID LPAREN arglista RPAREN '''
-    pass
+    t[0] = LlamadaFuncNodo(t[3],t[1])
 
 def p_arglista(t):
     ''' arglista : expresion
-                 | arglista COMMA expresion
-                 | empty
     '''
+    t[0] = t[1]
+
+def p_arglista_listas(t):
+    ''' arglista : arglista COMMA expresion '''
+    t[0].append(t[1])
+
+def p_arglista_empty(t):
+    ''' arglista : empty '''
     pass
 
 def p_operacionbin(t):
     ''' operacionbin : expresion operador expresion '''
-    pass
+    t[0] = BinOpNodo([t[1],t[3]],t[2])
 
 def p_operador(t):
     ''' operador : PLUS
@@ -211,22 +228,23 @@ def p_operador(t):
                  | EQ
                  | NE
     '''
-    pass
+    t[0] = t[1]
 
 def p_asignacion(t):
     ''' asignacion : ID asignador expresion '''
-    pass
+    t[0] = AsigNodo([t[1],t[3]],t[2])
 
 def p_asignador(t):
     ''' asignador : EQUALS
                   | PLUSEQUALS
                   | LESSEQUALS
     '''
-    pass
+    t[0] = t[1]
 
 def p_argssubp(t):
     ''' argssubp : paramsub
                  | paramsub COMMA argssubp
+                 | empty
     '''
     pass
 
@@ -244,7 +262,11 @@ def p_optbrackets(t):
 def p_retorno(t):
     ''' retorno : RETORNE idvariable SEMI
     '''
-    pass
+    t[0] = RetornoNodo([t[2]])
+
+def p_retorno_empty(t):
+    ''' retorno : empty '''
+    t[0] = RetornoNodo()
 
 #Vacio
 def p_empty(t):
