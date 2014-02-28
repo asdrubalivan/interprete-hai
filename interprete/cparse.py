@@ -9,9 +9,10 @@ from utils import get_decl_total, delete_brackets
 from nodos import (BinOpNodo, LlamadaFuncNodo, AsigNodo, RetornoNodo,
         VoidNodo, DeclaracionNodo, LeerNodo, EscribirNodo,
         BloqueSiNodo, BloqueRmNodo, BloqueHmNodo, BloqueRpNodo,
-        NegacionNodo)
+        NegacionNodo, SubprogramaNodo, ProgramaNodo, AlgoritmoNodo,
+        AlgoritmoSubNodo)
 
-DEBUG_PARSER = False
+DEBUG_PARSER = True
 
 tokens = clex.tokens
 
@@ -21,32 +22,44 @@ precedence = (
 )
 
 def p_raiz(t):
-    ''' raiz : empty
-            | programa
-            | programa subprogramas
+    ''' raiz : programa
     '''
-    pass
+    t[0] = [t[1]]
+
+def p_raiz_subprogramas(t):
+    ''' raiz : programa subprogramas '''
+    t[0] = [t[1]] + t[2]
+
+def p_raiz_empty(t):
+    ''' raiz : empty '''
+    t[0] = []
 
 def p_programa(t):
     ''' programa : PROGRAMA COLON ID progvariables algoritmo FINPROGRAMA '''
-    pass
+    t[0] = ProgramaNodo([t[4],t[5]],t[3])
 
 
 def p_progvariables(t):
     ''' progvariables : VARIABLES COLON declvariables
-                      | empty
     '''
+    t[0] = t[3]
+
+def p_progvariables_empty(t):
+    ''' progvariables : empty '''
     pass
 
 def p_subprogramas(t):
     ''' subprogramas : subprograma subprogramas
-                     | empty
     '''
-    pass
+    t[0] = [t[1]] + t[2]
+
+def p_subprogramas_empty(t):
+    ''' subprogramas : empty '''
+    t[0] = []
 
 def p_subprograma(t):
     ''' subprograma : SUBPROGRAMA COLON tiporetorno ID LPAREN argssubp RPAREN progvariables algoritmosub FINSUBPROGRAMA '''
-    pass
+    t[0] = SubprogramaNodo([t[3],t[6],t[8],t[9]],t[4])
 
 def p_tiporetorno(t):
     ''' tiporetorno : tipo optbrackets
@@ -67,10 +80,16 @@ def p_tipo(t):
 
 def p_declvariables(t):
     ''' declvariables : listadecl declvariables
-                      | empty
     '''
+    t[0] = t[1]
+    if t[2]:
+        t[0].extend(t[2])
+
+def p_declvariables_empty(t):
+    ''' declvariables : empty '''
     pass
 
+#TODO Anotar en las declaraciones el limite de caracteres de cada variable
 def p_listadecl(t):
     ''' listadecl : tipo listaids SEMI '''
     if t[2]:
@@ -135,13 +154,13 @@ def p_bracketsdecl(t):
 def p_algoritmo(t):
     ''' algoritmo : ALGORITMO COLON listasentencias FINALGORITMO
     '''
-    pass
+    t[0] = AlgoritmoNodo([t[3]])
 
 #Algoritmo en Subprograma
 
 def p_algoritmosub(t):
     ''' algoritmosub : ALGORITMO COLON listasentencias retorno FINALGORITMO '''
-    pass
+    t[0] = AlgoritmoSubNodo([t[3],t[4]])
 
 def p_listasentencias(t):
     ''' listasentencias : sentencia SEMI listasentencias
@@ -297,7 +316,7 @@ def p_asignador(t):
                   | PLUSEQUALS
                   | LESSEQUALS
     '''
-    t[0] = t[1]
+    t[0] = [t[1]]
 
 def p_argssubp(t):
     ''' argssubp : paramsub
@@ -356,4 +375,4 @@ if __name__=='__main__':
     import sys
     from pprint import pprint
     txt = '\n'.join([t for t in sys.stdin])
-    x= yacc.parse(txt,debug=DEBUG_PARSER)
+    yacc.parse(txt,debug=DEBUG_PARSER)

@@ -1,6 +1,7 @@
 Programa: Funcion
 Variables:
 Entero x[4],y[34],z[1][3],a;
+Real b,c[2421];
 Algoritmo:
 funcion();
 Finalgoritmo

@@ -14,6 +14,10 @@ BLOQUERM = "bloquerm"
 BLOQUEHM = "bloquehm"
 BLOQUERP = "bloquerp"
 NEGACION = "negacion"
+SUBPROGRAMA = "subprograma"
+PROGRAMA = "programa"
+ALGORITMO = "algoritmo"
+ALGORITMOSUB = "algoritmosub"
 
 class NodoError(Exception):
     pass
@@ -114,3 +118,25 @@ class DeclaracionNodo(Nodo):
         if temp:
             self.tipovar += re.sub("[A-Za-z_\d]+","",temp)
 
+
+class ProgramaBaseNodo(Nodo):
+    pass
+
+class ProgramaNodo(ProgramaBaseNodo):
+    def colocar_tipo(self):
+        self.tipo = PROGRAMA
+
+class SubprogramaNodo(ProgramaBaseNodo):
+    def colocar_tipo(self):
+        self.tipo = SUBPROGRAMA
+
+class AlgoritmoBaseNodo(Nodo):
+    pass
+
+class AlgoritmoNodo(AlgoritmoBaseNodo):
+    def colocar_tipo(self):
+        self.tipo = ALGORITMO
+
+class AlgoritmoSubNodo(AlgoritmoBaseNodo):
+    def colocar_tipo(self):
+        self.tipo = ALGORITMOSUB

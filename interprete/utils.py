@@ -1,12 +1,15 @@
 import itertools
 import re
 
+#TODO Cambiar esta regex para colocar tambier palabras, sin embargo hay que ver si será necesario
 REGEX_BRACKETS = r"\[(\d+)?\]"
 
 def count_brackets(string):
     return len(re.findall(REGEX_BRACKETS,string))
 
 def repeat_brackets(times):
+    if times <= 0:
+        return None
     i = 0
     var = []
     while i < times:
@@ -19,7 +22,7 @@ def get_brackets_decl(string):
 
 def get_decl_total(t,string):
     brackets = get_brackets_decl(string)
-    if brackets is None:
+    if not brackets:
         return [t]
     return [t,brackets]
 
