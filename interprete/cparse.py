@@ -10,7 +10,7 @@ from nodos import (BinOpNodo, LlamadaFuncNodo, AsigNodo, RetornoNodo,
         VoidNodo, DeclaracionNodo, LeerNodo, EscribirNodo,
         BloqueSiNodo, BloqueRmNodo, BloqueHmNodo, BloqueRpNodo,
         NegacionNodo, SubprogramaNodo, ProgramaNodo, AlgoritmoNodo,
-        AlgoritmoSubNodo)
+        AlgoritmoSubNodo, LiteralNodo)
 
 DEBUG_PARSER = True
 
@@ -230,7 +230,7 @@ def p_asigrp(t):
 def p_bloquerp(t):
     ''' bloquerp : REPITAPARA asigrp COMMA expresion COMMA expresion COLON listasentencias FINRP
     '''
-    t[0] = BloqueRmNodo([t[2],t[4],t[6],t[8]])
+    t[0] = BloqueRpNodo([t[2],t[4],t[6],t[8]])
 
 def p_bloquerm(t):
     ''' bloquerm : REPITAMIENTRAS expresion COLON listasentencias FINRM
@@ -265,7 +265,7 @@ def p_literal(t):
                 | FCONST
                 | SCONST
     '''
-    t[0] = t[1]
+    t[0] = LiteralNodo(hoja=t[1])
 
 def p_llamadafunc(t):
     ''' llamadafunc : ID LPAREN arglista RPAREN '''

@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from maquina import Maquina
 import re
 
 BINOP = "binop"
@@ -18,6 +19,7 @@ SUBPROGRAMA = "subprograma"
 PROGRAMA = "programa"
 ALGORITMO = "algoritmo"
 ALGORITMOSUB = "algoritmosub"
+LITERAL = "literal"
 
 class NodoError(Exception):
     pass
@@ -31,6 +33,7 @@ class Nodo(object):
         else:
             self.hijos = []
         self.hoja = hoja
+
     @abstractmethod
     def colocar_tipo(self):
         pass
@@ -44,6 +47,9 @@ class Nodo(object):
                 hijos=self.hijos,hoja=self.hoja)
     def __repr__(self):
         return str(self)
+    
+    def evaluar(self):
+        print("Evaluando {string}".format(string=str(self))
 
 
 class BinOpNodo(Nodo):
@@ -120,7 +126,8 @@ class DeclaracionNodo(Nodo):
 
 
 class ProgramaBaseNodo(Nodo):
-    pass
+    def id(self):
+        return self.hoja
 
 class ProgramaNodo(ProgramaBaseNodo):
     def colocar_tipo(self):
@@ -129,6 +136,9 @@ class ProgramaNodo(ProgramaBaseNodo):
 class SubprogramaNodo(ProgramaBaseNodo):
     def colocar_tipo(self):
         self.tipo = SUBPROGRAMA
+class LiteralNodo(Nodo):
+    def colocar_tipo(self):
+        self.tipo = LITERAL
 
 class AlgoritmoBaseNodo(Nodo):
     pass
