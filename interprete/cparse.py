@@ -1,3 +1,4 @@
+
 import sys
 import clex
 import ply.yacc as yacc
@@ -336,7 +337,7 @@ def p_argssubp_empty(t):
 
 def p_paramsub(t):
     ''' paramsub : tiporetorno ID '''
-    t[1].hoja = t[2] #Añadimos la ID
+    t[1].hoja = t[2] #Anadimos la ID
     t[0] = [t[1]]
     print(t[0])
 

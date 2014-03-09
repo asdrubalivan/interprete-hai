@@ -43,6 +43,9 @@ coverage.xml
 # Rope
 .ropeproject
 
+# pythoscope
+interprete/.pythoscope
+
 # Django stuff:
 *.log
 *.pot

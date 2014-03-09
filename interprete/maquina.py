@@ -80,7 +80,7 @@ class Maquina(object):
         self.meter_programas_subprogramas()
         self.programa.evaluar()
     def obtener_valor_maq(self,nombre):
-        #¿Es un entero?
+        #Es un entero?
         if re.compile("\d+").match(nombre):
             return nombre
         if self.in_scope(nombre):

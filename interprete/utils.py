@@ -1,8 +1,10 @@
+#!/usr/local/bin/python
+# coding: utf-8
 import itertools
 import re
 from collections import namedtuple
 
-#TODO Cambiar esta regex para colocar tambier palabras, sin embargo hay que ver si será necesario
+#TODO Cambiar esta regex para colocar tambier palabras, sin embargo hay que ver si sera necesario
 REGEX_BRACKETS = r"\[(\d+|[A-Za-z_]+)?\]"
 REGEX_BRACKETS_ID = r'\[(?P<ids>(\d+|[A-Za-z_]+))\]'
 REGEX_CAPTURE = r'(\[(?P<num>\d+)\])'

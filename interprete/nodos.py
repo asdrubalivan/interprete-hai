@@ -1,3 +1,5 @@
+#!/usr/local/bin/python
+# coding: utf-8
 from abc import ABCMeta, abstractmethod
 from maquina import Maquina, Simbolo
 from utils import delete_brackets
@@ -174,7 +176,7 @@ class DeclaracionNodo(Nodo):
         if temp:
             self.tipovar += re.sub("[A-Za-z_\d]+","",temp)
     def evaluar(self,maquina):
-        maquina.anadir_var(Simbolo(self.hoja,delete_brackets(self.tipovar),señf.tam_nodo))
+        maquina.anadir_var(Simbolo(self.hoja,delete_brackets(self.tipovar),self.tam_nodo))
 class ProgramaBaseNodo(Nodo):
     def id(self):
         return self.hoja
