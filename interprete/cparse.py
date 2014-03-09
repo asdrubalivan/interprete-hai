@@ -4,7 +4,7 @@ import ply.yacc as yacc
 import re
 import operator
 
-from utils import get_decl_total, delete_brackets
+from utils import get_decl_total, delete_brackets, numeros_bracket
 
 from nodos import (BinOpNodo, LlamadaFuncNodo, AsigNodo, RetornoNodo,
         VoidNodo, DeclaracionNodo, LeerNodo, EscribirNodo,
@@ -93,7 +93,7 @@ def p_declvariables_empty(t):
 def p_listadecl(t):
     ''' listadecl : tipo listaids SEMI '''
     if t[2]:
-        t[0] = [DeclaracionNodo(get_decl_total(t[1],x),delete_brackets(x),en_declvariables=True) for x in t[2]]
+        t[0] = [DeclaracionNodo(get_decl_total(t[1],x),delete_brackets(x),en_declvariables=True,tam_nodo=numeros_bracket(x)) for x in t[2]]
         print("T es : {}".format(t[0]))
 
 def p_listaids(t):
