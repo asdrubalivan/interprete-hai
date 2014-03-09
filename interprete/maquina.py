@@ -1,6 +1,5 @@
 from utils import delete_brackets, count_brackets, strip_del_brackets, ids_bracket, tiene_brackets
 import re
-
 ENTERO = "Entero"
 REAL = "Real"
 CARACTER = "Caracter"
@@ -17,6 +16,9 @@ class Simbolo(object):
         self.tam_vec = tam_vec
         self.valor = None #TODO Inicializar vectores en caso de no existir
         self.tipo = tipo
+    def __eq__(self,otro):
+        return (self.nombre == otro.nombre) and (self.tam_vec == otro.tam_vec) and \
+            (self.valor == otro.valor) and (self.tipo == otro.tipo)
     def asegurar_brackets(self,nombre_var):
         return self.nombre == strip_del_brackets(nombre_var) and count_brackets(self.nombre) == count_brackets(nombre_var)
     def obt_valor(self,val_corchetes=None):

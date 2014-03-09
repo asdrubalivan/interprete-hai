@@ -65,11 +65,13 @@ class TestIdsBracket(unittest.TestCase):
 class TestTieneBrackets(unittest.TestCase):
     def test_tiene_brackets(self):
         self.assertTrue(utils.tiene_brackets("hola[]"))
+        self.assertTrue(utils.tiene_brackets(" hola[]"))
         self.assertTrue(utils.tiene_brackets("hola[2]"))
         self.assertTrue(utils.tiene_brackets("hola[][3]"))
         self.assertTrue(utils.tiene_brackets("hola[a][3]"))
         self.assertTrue(utils.tiene_brackets("hola[2][3]"))
         self.assertFalse(utils.tiene_brackets(""))
+        self.assertFalse(utils.tiene_brackets(" "))
         self.assertFalse(utils.tiene_brackets("hola"))
         self.assertFalse(utils.tiene_brackets("hola["))
 

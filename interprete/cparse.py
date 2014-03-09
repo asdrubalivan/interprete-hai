@@ -95,7 +95,7 @@ def p_listadecl(t):
     ''' listadecl : tipo listaids SEMI '''
     if t[2]:
         t[0] = [DeclaracionNodo(get_decl_total(t[1],x),delete_brackets(x),en_declvariables=True,tam_nodo=numeros_bracket(x)) for x in t[2]]
-        print("T es : {}".format(t[0]))
+        #print("T es : {}".format(t[0]))
 
 def p_listaids(t):
     ''' listaids : iddecl COMMA listaids
@@ -339,7 +339,7 @@ def p_paramsub(t):
     ''' paramsub : tiporetorno ID '''
     t[1].hoja = t[2] #Anadimos la ID
     t[0] = [t[1]]
-    print(t[0])
+    #print(t[0])
 
 def p_optbrackets(t):
     ''' optbrackets : LBRACKET RBRACKET optbrackets
@@ -376,4 +376,4 @@ if __name__=='__main__':
     import sys
     from pprint import pprint
     txt = '\n'.join([t for t in sys.stdin])
-    yacc.parse(txt,debug=DEBUG_PARSER)
+    x=yacc.parse(txt,debug=DEBUG_PARSER)

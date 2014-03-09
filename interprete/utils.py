@@ -11,7 +11,6 @@ REGEX_CAPTURE = r'(\[(?P<num>\d+)\])'
 
 def count_brackets(string):
     return len(re.findall(REGEX_BRACKETS,string))
-
 def repeat_brackets(times):
     if times <= 0:
         return None
@@ -44,4 +43,4 @@ def ids_bracket(string):
     return [match.group("ids") for match in re.finditer(REGEX_BRACKETS_ID,string)]
 
 def tiene_brackets(string):
-    return bool(re.compile(REGEX_BRACKETS_ID).match(string))
+    return re.compile(REGEX_BRACKETS).search(string)
