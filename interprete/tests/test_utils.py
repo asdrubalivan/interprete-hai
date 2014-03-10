@@ -2,6 +2,7 @@ import sys
 sys.path.append("..")
 import unittest
 import utils
+import maquina
 
 class TestCountBrackets(unittest.TestCase):
     def test_count_brackets(self):
@@ -89,6 +90,15 @@ class TestEstaEnLimites(unittest.TestCase):
         self.assertFalse(utils.esta_en_limites((),(3,)))
 
 
+
+
+class TestTipo(unittest.TestCase):
+    def test_tipo(self):
+        self.assertEqual(maquina.CARACTER, utils.tipo("a"))
+        self.assertEqual(maquina.CARACTER, utils.tipo(""))
+        self.assertEqual(maquina.CARACTER, utils.tipo("a"))
+        self.assertEqual(maquina.REAL, utils.tipo(2.3))
+        self.assertEqual(maquina.ENTERO,utils.tipo(2))
 
 
 if __name__ == '__main__':
