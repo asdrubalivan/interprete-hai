@@ -76,5 +76,20 @@ class TestTieneBrackets(unittest.TestCase):
         self.assertFalse(utils.tiene_brackets("hola["))
 
 
+class TestEstaEnLimites(unittest.TestCase):
+    def test_esta_en_limites(self):
+        self.assertTrue(utils.esta_en_limites((2,3),(3,4)))
+        self.assertTrue(utils.esta_en_limites((2,2),(3,3)))
+        self.assertTrue(utils.esta_en_limites((0,0),(3,3)))
+        self.assertFalse(utils.esta_en_limites((0,0),(0,0)))
+        self.assertFalse(utils.esta_en_limites((1,0,4),(2,2,3)))
+        self.assertFalse(utils.esta_en_limites((0,),(0,)))
+        self.assertTrue(utils.esta_en_limites((1,),(3,)))
+        self.assertFalse(utils.esta_en_limites((2,),(3,1)))
+        self.assertFalse(utils.esta_en_limites((),(3,)))
+
+
+
+
 if __name__ == '__main__':
     unittest.main()
