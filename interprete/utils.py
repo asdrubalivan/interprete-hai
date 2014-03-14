@@ -4,6 +4,9 @@ import itertools
 import re
 from collections import namedtuple
 from itertools import repeat
+ENTERO = "Entero"
+REAL = "Real"
+CARACTER = "Caracter"
 
 #TODO Cambiar esta regex para colocar tambier palabras, sin embargo hay que ver si sera necesario
 REGEX_BRACKETS = r"\[(\d+|[A-Za-z_]+)?\]"
@@ -50,3 +53,22 @@ def esta_en_limites(tupla,maximo):
     if len(tupla) == 0 or len(tupla) != len(maximo):
         return False
     return all(t < m and t >= 0 for t,m in zip(tupla,maximo))
+
+def tipo(val):
+    if isinstance(val,int):
+        return ENTERO
+    elif isinstance(val,float):
+        return REAL
+    elif isinstance(val,str):
+        return CARACTER
+    else:
+        raise TypeError("Tipo desconocido")
+
+def val_input():
+    val = input().strip()
+    if re.match(r"^(\+|\-)*\d+\.\d+$",val):
+        return float(val)
+    elif re.match(r"^(\+|\-)*\d+$",val):
+        return int(val)
+    else:
+        return val

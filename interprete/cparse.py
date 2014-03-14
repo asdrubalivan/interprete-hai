@@ -4,6 +4,10 @@ import clex
 import ply.yacc as yacc
 import re
 import operator
+from settings import LOGGER_FILE, LOGGER_LEVEL
+import logging
+
+logging.basicConfig(filename=LOGGER_FILE,level=LOGGER_LEVEL)
 
 from utils import get_decl_total, delete_brackets, numeros_bracket
 
@@ -11,7 +15,7 @@ from nodos import (BinOpNodo, LlamadaFuncNodo, AsigNodo, RetornoNodo,
         VoidNodo, DeclaracionNodo, LeerNodo, EscribirNodo,
         BloqueSiNodo, BloqueRmNodo, BloqueHmNodo, BloqueRpNodo,
         NegacionNodo, SubprogramaNodo, ProgramaNodo, AlgoritmoNodo,
-        AlgoritmoSubNodo, LiteralNodo)
+        AlgoritmoSubNodo, LiteralNodo, DummyNodo)
 
 DEBUG_PARSER = True
 
@@ -111,6 +115,7 @@ def p_listaids(t):
 def p_listaids_id(t):
     ''' listaids : iddecl '''
     t[0] = t[1]
+    logging.debug("Lista ids {}".format(t[0]))
 
 def p_iddecl(t):
     ''' iddecl : ID bracketsdecl
@@ -160,7 +165,7 @@ def p_algoritmo(t):
 #Algoritmo en Subprograma
 
 def p_algoritmosub(t):
-    ''' algoritmosub : ALGORITMO COLON listasentencias retorno FINALGORITMO '''
+    ''' algoritmosub : ALGORITMO COLON listasentencias FINALGORITMO '''
     t[0] = AlgoritmoSubNodo([t[3],t[4]])
 
 def p_listasentencias(t):
@@ -184,12 +189,15 @@ def p_sentencia(t):
     ''' sentencia : asignacion
                   | senleer
                   | senescribir
-                  | expresion
     '''
     t[0] = t[1]
 
+def p_sentencia_expr(t):
+    ''' sentencia : expresion '''
+    t[0] = DummyNodo()
+
 def p_senleer(t):
-    ''' senleer : LEER iddecl '''
+    ''' senleer : LEER idvariable '''
     t[0] = LeerNodo([t[2]],t[1])
 
 def p_senescribir(t):
@@ -207,7 +215,7 @@ def p_sencomp(t):
 def p_bloquesi(t):
     ''' bloquesi : SI expresion ENTONCES listasentencias FINSI
     '''
-    t[0] = BloqueSiNodo([t[2],t[4],None])
+    t[0] = BloqueSiNodo([t[2],t[4],[]])
 
 def p_bloquesi_contrario(t):
     ''' bloquesi : SI expresion ENTONCES listasentencias CONTRARIO listasentencias FINSI
@@ -309,7 +317,7 @@ def p_operador(t):
     t[0] = t[1]
 
 def p_asignacion(t):
-    ''' asignacion : ID asignador expresion '''
+    ''' asignacion : idvariable asignador expresion '''
     t[0] = AsigNodo([t[1],t[3]],t[2])
 
 def p_asignador(t):
@@ -372,6 +380,11 @@ def p_error(t):
     print("Error")
 
 yacc.yacc(check_recursion=1,optimize=1,debug=DEBUG_PARSER)
+
+
+def parse_text(txt):
+    return yacc.parse(txt,debug=DEBUG_PARSER)
+
 if __name__=='__main__':
     import sys
     from pprint import pprint

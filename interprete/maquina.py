@@ -1,4 +1,6 @@
-from utils import delete_brackets, count_brackets, strip_del_brackets, ids_bracket, tiene_brackets
+from utils import (delete_brackets, count_brackets,
+        strip_del_brackets, ids_bracket,
+        tiene_brackets, tipo, esta_en_limites)
 import re
 ENTERO = "Entero"
 REAL = "Real"
@@ -14,21 +16,62 @@ class Simbolo(object):
     def __init__(self,nombre,tipo,tam_vec=None):
         self.nombre = strip_del_brackets(nombre)
         self.tam_vec = tam_vec
-        self.valor = None #TODO Inicializar vectores en caso de no existir
+        if not self.tam_vec:
+            self.valor = None #TODO Inicializar vectores en caso de no existir
+        else:
+            self.valor = {}
         self.tipo = tipo
     def __eq__(self,otro):
         return (self.nombre == otro.nombre) and (self.tam_vec == otro.tam_vec) and \
             (self.valor == otro.valor) and (self.tipo == otro.tipo)
+    def esta_en_limites(self,posicion):
+        if not hasattr(self.tam_vec,'__iter__'):
+            return True
+        return esta_en_limites(posicion,self.tam_vec)
+    def brackets_necesarias(self):
+        if not hasattr(self.tam_vec,'__iter__'):
+            return 0
+        return len(self.tam_vec)
     def asegurar_brackets(self,nombre_var):
-        return self.nombre == strip_del_brackets(nombre_var) and count_brackets(self.nombre) == count_brackets(nombre_var)
+        return self.nombre == strip_del_brackets(nombre_var) and self.brackets_necesarias() == count_brackets(nombre_var)
     def obt_valor(self,val_corchetes=None):
         if val_corchetes is None:
-            return self.valor
+            if self.valor is not None:
+                return self.valor
+            else:
+                raise SimboloError("No inicializado {}".format(self.nombre))
+        if not self.esta_en_limites(val_corchetes):
+            raise SimboloError("Fuera de rango {}".format(val_corchetes))
         #Tiene corchetes
         try:
             return self.valor[val_corchetes]
         except KeyError:
-            raise SimboloError("Fuera de rango {valores}".format(valores=val_corchetes))
+            raise SimboloError("No inicializado {valores}".format(valores=val_corchetes))
+    def asignar(self,valor,posicion=None,asignador="="):
+        if tipo(valor) == strip_del_brackets(self.tipo):
+            if posicion:
+                if self.esta_en_limites(posicion):
+                    if asignador == "=":
+                        self.valor[posicion] = valor
+                    elif asignador == "+=":
+                        self.valor[posicion] += valor
+                    elif asignador == "-=":
+                        self.valor[posicion] -= valor
+                    else:
+                        raise SimboloError("Asignacion invalida '{}'".format(asignador))
+                else:
+                    raise SimboloError("Asignacion fuera de rango Posicion: {p}".format(p=posicion))
+            else:
+                if asignador == "=":
+                    self.valor = valor
+                elif asignador == "+=":
+                    self.valor += valor
+                elif asignador == "-=":
+                    self.valor -= valor
+                else:
+                    raise SimboloError("Asignacion invalida '{}'".format(asignador))
+        else:
+            raise SimboloError("Tipo invalido {t}".format(t=tipo(valor)))
 class MaquinaError(Exception):
     pass
 
@@ -81,28 +124,44 @@ class Maquina(object):
     def evaluar_raices(self):
         self.meter_programas_subprogramas()
         self.programa.evaluar()
+    def get_simbolo(self,nombre):
+        return self.current_scope()[strip_del_brackets(nombre)]
+    def get_valores_ids(self,ids):
+        return tuple([self.obtener_valor_maq(x) for x in ids]) 
     def obtener_valor_maq(self,nombre):
         #Es un entero?
         if re.compile("\d+").match(nombre):
-            return nombre
+            return int(nombre)
         if self.in_scope(nombre):
-            simb = self.current_scope()[delete_brackets(nombre).strip()]
+            simb = self.get_simbolo(nombre)
             if tiene_brackets(nombre) and simb.asegurar_brackets(nombre):
                 ids = ids_bracket(nombre)
                 #Ids ya con variable definida
-                ids_def = tuple([self.obtener_valor_maq(x) for x in ids])
+                ids_def = self.get_valores_ids(ids) # NOTE: Recursividad indirecta
                 return simb.obt_valor(ids_def)
             return simb.obt_valor()
         else:
             raise MaquinaError("Nombre no definido {nombre}".format(nombre=delete_brackets(nombre)))
-
+    def asignar(self,nombre,valor,operador="="):
+        if self.in_scope(nombre):
+            simb = self.get_simbolo(nombre)
+            if tiene_brackets(nombre) and simb.asegurar_brackets(nombre):
+                ids = ids_bracket(nombre)
+                ids_def = self.get_valores_ids(ids)
+                simb.asignar(valor,ids_def,operador)
+            else:
+                simb.asignar(valor,asignador=operador)
+        else:
+            raise MaquinaError("Nombre no definido {nombre}".format(nombre=nombre))
 if __name__=='__main__':
     from pprint import pprint
     m = Maquina()
     m.push_scope()
     m.current_scope()["a"] = Simbolo("a","Entero")
     m.current_scope()["a"].valor = 1
-    m.current_scope()["Probando"] = Simbolo("Probando","Entero",(2,))
-    m.current_scope()["Probando"].valor = {(1,3):3}
+    m.current_scope()["Probando"] = Simbolo("Probando","Entero",(2,8))
+    m.current_scope()["Probando"].valor = {(1,3):3,(1,9):7}
+    m.current_scope()["Probando"].asignar(2,posicion=(1,1))
     pprint(m)
     print("Valor de Probando {}".format(m.obtener_valor_maq(" Probando[a][3]")))
+    print("Valor 1:1 es {}".format(m.obtener_valor_maq("Probando[a][9]")))

@@ -1,9 +1,11 @@
 #!/usr/local/bin/python
 # coding: utf-8
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod, abstractproperty
 from maquina import Maquina, Simbolo
-from utils import delete_brackets
+from utils import delete_brackets, val_input
 import re
+from itertools import repeat
+import cparse
 
 BINOP = "binop"
 LLAMADAFUNC = "llamadafunc"
@@ -32,20 +34,18 @@ class NodoError(Exception):
 class BinOpError(NodoError):
     pass
 
+class RetornoSenal(Exception):
+    pass
+
 class Nodo(object):
     __metaclass__ = ABCMeta
 
     def __init__(self,hijos=None,hoja=None):
-        self.colocar_tipo()
         if hijos:
             self.hijos = hijos
         else:
             self.hijos = []
         self.hoja = hoja
-
-    @abstractmethod
-    def colocar_tipo(self):
-        pass
 
     def append(self,val):
         self.hijos.append(val)
@@ -56,9 +56,33 @@ class Nodo(object):
                 hijos=self.hijos,hoja=self.hoja)
     def __repr__(self):
         return str(self)
+    def _print_clase_hoja(self):
+        return "[{clase}] => Hoja {hoja} ".format(clase=self.__class__.__name__,hoja=self.hoja)
+    def dump(self,indent=0,max_level=100,sp_per_level=4):
+        spaces = ' ' * (indent * sp_per_level)
+        print(spaces + self._print_clase_hoja())
+        spaces = ' ' * (indent * (sp_per_level + 1))
+        if indent < max_level:
+            for val in self.hijos:
+                if hasattr(val,'__iter__'):
+                    for v in val:
+                        if not isinstance(val,str):
+                            v.dump(indent+1)
+                        else:
+                            print(spaces + val)
+                else:
+                    if not isinstance(val,str):
+                        val.dump(indent+1)
+                    else:
+                        print(spaces + val)
     
-    def evaluar(self,ref):
-        print("Evaluando {string}".format(string=str(self)))
+    @abstractmethod
+    def evaluar(self,maquina):
+        pass
+
+class DummyNodo(Nodo):
+    def evaluar(self,maquina):
+        pass
 
 class BinOpNodo(Nodo):
     def colocar_tipo(self):
@@ -107,39 +131,125 @@ class BinOpNodo(Nodo):
 class LlamadaFuncNodo(Nodo):
     def colocar_tipo(self):
         self.tipo = LLAMADAFUNC
+    def evaluar(self,maquina):
+        raise NotImplementedError()
 
 class AsigNodo(Nodo):
     def colocar_tipo(self):
         self.tipo = ASIG
+    @property
+    def idvariable(self):
+        return self.hijos[0]
+    @property
+    def operador(self):
+        return self.hoja
+    def evaluar(self,maquina):
+        maquina.asignar(self.idvariable,maquina.pop_resultado(),self.operador)
 
 class RetornoNodo(Nodo):
     def colocar_tipo(self):
         self.tipo = RETORNO
+    def evaluar(self,maquina):
+        raise NotImplementedError()
 
 class EscribirNodo(Nodo):
     def colocar_tipo(self):
         self.tipo = ESCRIBIR
+    def evaluar(self,maquina):
+        #Chequear si es un literal
+        if isinstance(self.hijos[0],Nodo):
+            self.hijos[0].evaluar(maquina)
+            print(maquina.pop_resultado())
+        else:
+            print(self.hijos[0])
 
 class LeerNodo(Nodo):
     def colocar_tipo(self):
         self.tipo = LEER
+    @property
+    def variable(self):
+        return self.hijos[0]
+    def evaluar(self,maquina):
+        maquina.asignar(self.variable,val_input())
 
 class BloqueSiNodo(Nodo):
     def colocar_tipo(self):
         self.tipo = BLOQUESI
-
+    @property
+    def expresion(self):
+        return self.hijos[0]
+    @property
+    def si_afirmativo(self):
+        return self.hijos[1]
+    @property
+    def si_contrario(self):
+        return self.hijos[2]
+    def evaluar(self,maquina):
+        self.expresion.evaluar(maquina)
+        result_expr = bool(maquina.pop_resultado())
+        if result_expr:
+            for val in self.si_afirmativo:
+                val.evaluar(maquina)
+        else:
+            for val in self.si_contrario:
+                val.evaluar(maquina)
 class BloqueRmNodo(Nodo):
     def colocar_tipo(self):
         self.tipo = BLOQUERM
+    @property
+    def expresion(self):
+        return self.hijos[0]
+    @property
+    def sentencias(self):
+        return self.hijos[1]
+    def evaluar(self,maquina):
+        while True:
+            self.expresion.evaluar(maquina)
+            result_expr = bool(maquina.pop_resultado())
+            if result_expr:
+                for val in self.sentencias:
+                    val.evaluar(maquina)
+            else:
+                break
 
 class BloqueHmNodo(Nodo):
-    def colocar_tipo(self):
-        self.tipo = BLOQUEHM
+    @property
+    def expresion(self):
+        return self.hijos[1]
+    @property
+    def sentencias(self):
+        return self.hijos[0]
+    def evaluar(self,maquina):
+        while True:
+            for val in self.sentencias:
+                val.evaluar(maquina)
+            self.expresion.evaluar(maquina)
+            result_expr = bool(maquina.pop_resultado())
+            if not result_expr:
+                break
 
 class BloqueRpNodo(Nodo):
-    def colocar_tipo(self):
-        self.tipo = BLOQUERP
-
+    @property
+    def asignacion(self):
+        return self.hijos[0]
+    @property 
+    def expr_comp(self):
+        return self.hijos[1]
+    @property
+    def expr_incr(self):
+        return self.hijos[2]
+    @property
+    def sentencias(self):
+        return self.hijos[3]
+    def evaluar(self,maquina):
+        self.asignacion.evaluar(maquina)
+        while True:
+            self.expr_comp.evaluar(maquina)
+            # Comparamos que la expresion no sea cierta
+            if not bool(maquina.pop_resultado()):
+                break
+            for val in self.sentencias:
+                val.evaluar(maquina)
 class NegacionNodo(Nodo):
     def colocar_tipo(self):
         self.tipo = NEGACION
@@ -198,22 +308,46 @@ class LiteralNodo(Nodo):
         maquina.push_resultado(self.literal)
 
 class AlgoritmoBaseNodo(Nodo):
-    pass
+    __metaclass__= ABCMeta
+    def evaluar(self,maquina):
+        pass
+    @abstractproperty
+    def sentencias(self):
+        pass
+    def _evaluar(self,maquina):
+        for val in self.sentencias:
+            val.evaluar(maquina)
 
 class AlgoritmoNodo(AlgoritmoBaseNodo):
-    def colocar_tipo(self):
-        self.tipo = ALGORITMO
-
+    @property
+    def sentencias(self):
+        return self.hijos[0]
+    def evaluar(self,maquina):
+        self._evaluar(maquina)
 class AlgoritmoSubNodo(AlgoritmoBaseNodo):
+    @property
+    def sentencias(self):
+        return self.hijos[0]
     def colocar_tipo(self):
         self.tipo = ALGORITMOSUB
+    def evaluar(self,maquina):
+        try:
+            self._evaluar(maquina)
+        except RetornoSenal:
+            pass
+        
 
 if __name__=='__main__':
-    tree = [BinOpNodo(
+    '''tree = [BinOpNodo(
         [BinOpNodo(
             [LiteralNodo(hoja=3),
             LiteralNodo(hoja=3)],'-'),
         LiteralNodo(hoja=5)],'+')]
     maquina = Maquina()
     tree[0].evaluar(maquina)
-    print(maquina)
+    tree[0].dump()
+    print(maquina)'''
+    import sys
+    from pprint import pprint
+    nodos = cparse.parse_text('\n'.join([t for t in sys.stdin]))
+    pprint(nodos)
