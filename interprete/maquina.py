@@ -26,7 +26,7 @@ class Simbolo(object):
         return (self.nombre == otro.nombre) and (self.tam_vec == otro.tam_vec) and \
             (self.valor == otro.valor) and (self.tipo == otro.tipo)
     def esta_en_limites(self,posicion):
-        if not is_sequence(self.tam_vec)
+        if not is_sequence(self.tam_vec):
             return True
         return esta_en_limites(posicion,self.tam_vec)
     def brackets_necesarias(self):
