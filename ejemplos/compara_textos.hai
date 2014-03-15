@@ -12,6 +12,12 @@ Contrario
                  Escribir "El número introducido es negativo";
           Contrario
                  Escribir "El número es cero";
+                 Escribir "\n";
+                 Numero1 = 3;
+                 Si Numero1 < 3 Entonces
+                    Escribir "Error";
+                 Finsi
+                 Escribir Numero1;
           Finsi
 Finsi
 Finalgoritmo

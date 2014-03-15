@@ -2,7 +2,7 @@
 # coding: utf-8
 from abc import ABCMeta, abstractmethod, abstractproperty
 from maquina import Maquina, Simbolo
-from utils import delete_brackets, val_input, is_sequence
+from utils import delete_brackets, val_input, is_sequence, is_num
 import re
 from itertools import repeat
 
@@ -93,10 +93,30 @@ class BinOpNodo(Nodo):
     def derecha(self):
         return self.hijos[1]
     def evaluar(self,maquina):
-        self.izquierda.evaluar(maquina)
-        r_izq = maquina.pop_resultado()
-        self.derecha.evaluar(maquina)
-        r_der = maquina.pop_resultado()
+        if isinstance(self.izquierda,str):
+            r_izq = maquina.obtener_valor_maq(self.izquierda)
+            eval_izq = False
+        elif is_num(self.izquierda):
+            eval_izq = False
+            r_izq = self.izquierda
+        else:
+            r_izq = self.izquierda
+            eval_izq = True
+        if eval_izq:
+            izq.evaluar(maquina)
+            r_izq = maquina.pop_resultado()
+        if isinstance(self.derecha,str):
+            r_der = maquina.obtener_valor_maq(self.izquierda)
+            eval_der = False
+        elif is_num(self.derecha):
+            eval_der = False
+            r_der = self.derecha
+        else:
+            der = self.derecha
+            eval_der = True
+        if eval_der:
+            der.evaluar(maquina)
+            r_der = maquina.pop_resultado()
         temp = None
         if self.hoja == '+':
             temp = r_izq + r_der
@@ -290,9 +310,22 @@ class ProgramaBaseNodo(Nodo):
     def id(self):
         return self.hoja
 
+#TODO Colocar progvariables como abstracta (Sera necesario?)
 class ProgramaNodo(ProgramaBaseNodo):
+    @property
+    def progvariables(self):
+        return self.hijos[0]
+    @property
+    def algoritmo(self):
+        return self.hijos[1]
     def colocar_tipo(self):
         self.tipo = PROGRAMA
+    def evaluar(self,maquina):
+        maquina.push_scope()
+        for val in self.progvariables:
+            val.evaluar(maquina)
+        self.algoritmo.evaluar(maquina)
+        maquina.pop_scope()
 
 class SubprogramaNodo(ProgramaBaseNodo):
     def colocar_tipo(self):

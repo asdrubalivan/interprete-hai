@@ -95,7 +95,7 @@ class Maquina(object):
     def current_scope(self):
         return self.scopes[-1]
     def anadir_var(self,var):
-        if self.esta_definida(var):
+        if self.esta_definida(var.nombre):
             raise MaquinaError("Variable {var} ya definida".format(var=var))
         self.current_scope()[strip_del_brackets(var.nombre)] = var
     def in_scope(self,var):
@@ -124,7 +124,7 @@ class Maquina(object):
     #NOTE Metodo muy importante
     def evaluar_raices(self):
         self.meter_programas_subprogramas()
-        self.programa.evaluar()
+        self.programa.evaluar(self)
     def get_simbolo(self,nombre):
         return self.current_scope()[strip_del_brackets(nombre)]
     def get_valores_ids(self,ids):

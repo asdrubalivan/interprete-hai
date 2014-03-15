@@ -16,7 +16,7 @@ from nodos import (BinOpNodo, LlamadaFuncNodo, AsigNodo, RetornoNodo,
         NegacionNodo, SubprogramaNodo, ProgramaNodo, AlgoritmoNodo,
         AlgoritmoSubNodo, LiteralNodo, DummyNodo)
 
-DEBUG_PARSER = True
+DEBUG_PARSER = False
 
 tokens = clex.tokens
 
