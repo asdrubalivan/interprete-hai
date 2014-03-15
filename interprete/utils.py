@@ -72,3 +72,6 @@ def val_input():
         return int(val)
     else:
         return val
+
+def is_sequence(arg):
+    return isinstance(arg,(type(()),type([])))

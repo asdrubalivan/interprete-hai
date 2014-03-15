@@ -1,6 +1,7 @@
 Programa: ComparaNumeros
 Variables:
 Entero NUMERO;
+Entero Numero1,Numero2;
 Algoritmo:
 Escribir "Introduzca un número ";
 Leer NUMERO;

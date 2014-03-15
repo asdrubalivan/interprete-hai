@@ -2,10 +2,9 @@
 # coding: utf-8
 from abc import ABCMeta, abstractmethod, abstractproperty
 from maquina import Maquina, Simbolo
-from utils import delete_brackets, val_input
+from utils import delete_brackets, val_input, is_sequence
 import re
 from itertools import repeat
-import cparse
 
 BINOP = "binop"
 LLAMADAFUNC = "llamadafunc"
@@ -64,7 +63,7 @@ class Nodo(object):
         spaces = ' ' * (indent * (sp_per_level + 1))
         if indent < max_level:
             for val in self.hijos:
-                if hasattr(val,'__iter__'):
+                if is_sequence(val):
                     for v in val:
                         if not isinstance(val,str):
                             v.dump(indent+1)
@@ -349,5 +348,6 @@ if __name__=='__main__':
     print(maquina)'''
     import sys
     from pprint import pprint
-    nodos = cparse.parse_text('\n'.join([t for t in sys.stdin]))
+    from cparse import parse_text
+    nodos = parse_text('\n'.join([t for t in sys.stdin]))
     pprint(nodos)

@@ -8,7 +8,7 @@ import logging as logger
 
 logger.basicConfig(filename=LOGGER_FILE,level=LOGGER_LEVEL)
 
-from utils import get_decl_total, delete_brackets, numeros_bracket
+from utils import get_decl_total, delete_brackets, numeros_bracket, is_sequence
 
 from nodos import (BinOpNodo, LlamadaFuncNodo, AsigNodo, RetornoNodo,
         VoidNodo, DeclaracionNodo, LeerNodo, EscribirNodo,
@@ -34,7 +34,7 @@ def p_raiz(t):
 def p_raiz_subprogramas(t):
     ''' raiz : programa subprogramas '''
     t[0] = [t[1]] + t[2]
-    logger.debug("Parseando programas con subprogramas".format(t[¨0]))
+    logger.debug("Parseando programas con subprogramas".format(t[0]))
 
 def p_raiz_empty(t):
     ''' raiz : empty '''
@@ -61,7 +61,7 @@ def p_subprogramas(t):
     ''' subprogramas : subprograma subprogramas
     '''
     t[0] = [t[1]] + t[2]
-    logger.debug("Colocando subprograma {s} en subprogramas (Len:{l})".format(s=t[2],l=len(t[0]))
+    logger.debug("Colocando subprograma {s} en subprogramas (Len:{l})".format(s=t[2],l=len(t[0])))
 
 def p_subprogramas_empty(t):
     ''' subprogramas : empty '''
@@ -111,8 +111,19 @@ def p_declvariables_empty(t):
 def p_listadecl(t):
     ''' listadecl : tipo listaids SEMI '''
     if t[2]:
-        t[0] = [DeclaracionNodo(get_decl_total(t[1],x),delete_brackets(x),en_declvariables=True,tam_nodo=numeros_bracket(x)) for x in t[2]]
-        logger.debug("Listadecl es : {}".format(t[0]))
+        #FIXME Aqui hay un problema NUMERO --> N U M E R O
+        #En caso de que sea lista hacer algo, y en caso de que no hacer otro
+        logger.debug("listadecl : tipo listaids SEMI Tipo de t[2] es {t}".format(t=type(t[2])))
+        if is_sequence(t[2]):
+            l = []
+            for x in t[2]:
+                logger.debug("x en t[2] es de tipo {t} y tiene valor {v}".format(t=type(x),v=x))
+                var = DeclaracionNodo(get_decl_total(t[1],x),delete_brackets(x),en_declvariables=True,tam_nodo=numeros_bracket(x))
+                l.append(var)
+                logger.debug("Listadecl es : {}".format(t[0]))
+            t[0] = l
+        else:
+            t[0] = [DeclaracionNodo(get_decl_total(t[1],t[2]),delete_brackets(t[2]),en_declvariables=True,tam_nodo=numeros_bracket(t[2]))]
     else:
         logger.warning("listadecl: listaids vacia")
 
@@ -230,12 +241,12 @@ def p_sentencia_expr(t):
 def p_senleer(t):
     ''' senleer : LEER idvariable '''
     t[0] = LeerNodo([t[2]],t[1])
-    logger.debug("Sentencia leer, con variable {t0}".format(t0=t[0])
+    logger.debug("Sentencia leer, con variable {t0}".format(t0=t[0]))
 
 def p_senescribir(t):
     ''' senescribir : ESCRIBIR expresion '''
     t[0] = EscribirNodo([t[2]],t[1])
-    logger.debug("Sentencia escribir, con variable {t0}".format(t0=t[0])
+    logger.debug("Sentencia escribir, con variable {t0}".format(t0=t[0]))
 
 def p_sencomp(t):
     ''' sencomp : bloquesi
@@ -244,25 +255,25 @@ def p_sencomp(t):
                 | bloquehm
     '''
     t[0] = t[1]
-    logger.debug("Sentencia compleja, con variable {t0}".format(t0=t[0])
+    logger.debug("Sentencia compleja, con variable {t0}".format(t0=t[0]))
 
 def p_bloquesi(t):
     ''' bloquesi : SI expresion ENTONCES listasentencias FINSI
     '''
     t[0] = BloqueSiNodo([t[2],t[4],[]])
-    logger.debug("Bloque Si, con variable {t0}".format(t0=t[0])
+    logger.debug("Bloque Si, con variable {t0}".format(t0=t[0]))
 
 def p_bloquesi_contrario(t):
     ''' bloquesi : SI expresion ENTONCES listasentencias CONTRARIO listasentencias FINSI
     '''
     t[0] = BloqueSiNodo([t[2],t[4],t[6]])
-    logger.debug("Sentencia leer, con variable {t0}".format(t0=t[0])
+    logger.debug("Sentencia leer, con variable {t0}".format(t0=t[0]))
 
 def p_asignsimple(t):
     ''' asignsimple : idvariable EQUALS expresion
     '''
     t[0] = AsigNodo([t[1],t[3]],t[2])
-    logger.debug("Asignacion simple, con variable {t0}".format(t0=t[0])
+    logger.debug("Asignacion simple, con variable {t0}".format(t0=t[0]))
 
 # Asignacion en Repita para
 # NOTE Se usa simple debido a que no
@@ -272,31 +283,31 @@ def p_asigrp(t):
                | idvariable
     '''
     t[0] = t[1]
-    logger.debug("Asignacion, con variable {t0}".format(t0=t[0])
+    logger.debug("Asignacion, con variable {t0}".format(t0=t[0]))
 
 def p_bloquerp(t):
     ''' bloquerp : REPITAPARA asigrp COMMA expresion COMMA expresion COLON listasentencias FINRP
     '''
     t[0] = BloqueRpNodo([t[2],t[4],t[6],t[8]])
-    logger.debug("Bloque Repita para, con variable {t0}".format(t0=t[0])
+    logger.debug("Bloque Repita para, con variable {t0}".format(t0=t[0]))
 
 def p_bloquerm(t):
     ''' bloquerm : REPITAMIENTRAS expresion COLON listasentencias FINRM
     '''
     t[0] = BloqueRmNodo([t[2],t[4]])
-    logger.debug("Bloque repita mientras, con variable {t0}".format(t0=t[0])
+    logger.debug("Bloque repita mientras, con variable {t0}".format(t0=t[0]))
 
 def p_bloquehm(t):
     ''' bloquehm : HAGA COLON listasentencias MIENTRAS LPAREN expresion RPAREN 
     '''
     t[0] = BloqueHmNodo([t[6],t[3]])
-    logger.debug("Bloque haga mientras, con variable {t0}".format(t0=t[0])
+    logger.debug("Bloque haga mientras, con variable {t0}".format(t0=t[0]))
 
 def p_expresion(t):
     ''' expresion : NOT expresion
     '''
     t[0] = NegacionNodo([t[2]])
-    logger.debug("Expresion negacion, con variable {t0}".format(t0=t[0])
+    logger.debug("Expresion negacion, con variable {t0}".format(t0=t[0]))
 
 def p_expression_paren(t):
     ''' expresion : LPAREN expresion RPAREN

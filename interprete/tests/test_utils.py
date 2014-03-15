@@ -101,5 +101,17 @@ class TestTipo(unittest.TestCase):
         self.assertEqual(maquina.ENTERO,utils.tipo(2))
 
 
+class TestValInput(unittest.TestCase):
+    def test_val_input(self):
+        # self.assertEqual(expected, val_input())
+        assert True # TODO: implement your test here
+
+class TestIsSequence(unittest.TestCase):
+    def test_is_sequence(self):
+        self.assertTrue(utils.is_sequence(()))
+        self.assertFalse(utils.is_sequence(""))
+        self.assertFalse(utils.is_sequence("asa"))
+        self.assertTrue(utils.is_sequence([]))
+
 if __name__ == '__main__':
     unittest.main()

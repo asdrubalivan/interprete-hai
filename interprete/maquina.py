@@ -1,6 +1,7 @@
 from utils import (delete_brackets, count_brackets,
         strip_del_brackets, ids_bracket,
-        tiene_brackets, tipo, esta_en_limites)
+        tiene_brackets, tipo, esta_en_limites,
+        is_sequence)
 import re
 ENTERO = "Entero"
 REAL = "Real"
@@ -25,11 +26,11 @@ class Simbolo(object):
         return (self.nombre == otro.nombre) and (self.tam_vec == otro.tam_vec) and \
             (self.valor == otro.valor) and (self.tipo == otro.tipo)
     def esta_en_limites(self,posicion):
-        if not hasattr(self.tam_vec,'__iter__'):
+        if not is_sequence(self.tam_vec)
             return True
         return esta_en_limites(posicion,self.tam_vec)
     def brackets_necesarias(self):
-        if not hasattr(self.tam_vec,'__iter__'):
+        if not is_sequence(self.tam_vec):
             return 0
         return len(self.tam_vec)
     def asegurar_brackets(self,nombre_var):
