@@ -3,10 +3,10 @@ import clex
 import ply.yacc as yacc
 import re
 import operator
-from settings import LOGGER_FILE, LOGGER_LEVEL
-import logging as logger
+import logging
+import logconfig
+logger = logging.getLogger(__name__)
 
-logger.basicConfig(filename=LOGGER_FILE,level=LOGGER_LEVEL)
 
 from utils import get_decl_total, delete_brackets, numeros_bracket, is_sequence
 

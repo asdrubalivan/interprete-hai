@@ -48,6 +48,7 @@ interprete/.pythoscope
 
 # Django stuff:
 *.log
+*.log.*
 *.pot
 
 # Sphinx documentation
