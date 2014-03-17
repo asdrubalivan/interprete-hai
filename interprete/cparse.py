@@ -358,8 +358,22 @@ def p_arglista_empty(t):
     ''' arglista : empty '''
     logger.debug("arglista : empty")
 
+
+#NOTE Toca ponerlo asi para que las precedencias se cumplan
 def p_operacionbin(t):
-    ''' operacionbin : expresion operador expresion '''
+    ''' operacionbin : expresion PLUS expresion
+                     | expresion MINUS expresion
+                     | expresion TIMES expresion
+                     | expresion DIVIDE expresion
+                     | expresion OR expresion
+                     | expresion AND expresion
+                     | expresion LT expresion
+                     | expresion GT expresion
+                     | expresion GE expresion
+                     | expresion EQ expresion
+                     | expresion NE expresion
+                     | expresion MOD expresion
+    '''
     t[0] = BinOpNodo([t[1],t[3]],t[2])
     logger.debug("Operacion binaria {izq} {op} {der}".format(izq=t[1],der=t[3],op=t[2]))
 
@@ -377,7 +391,8 @@ def p_operador(t):
                  | GE
                  | EQ
                  | NE
-    '''
+                 '''
+    
     t[0] = t[1]
 
 def p_asignacion(t):
