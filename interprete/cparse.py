@@ -25,6 +25,7 @@ precedence = (
     ('left', 'TIMES', 'DIVIDE'),
 )
 
+
 def p_raiz(t):
     ''' raiz : programa
     '''

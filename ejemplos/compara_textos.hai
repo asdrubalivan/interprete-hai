@@ -19,6 +19,8 @@ Contrario
                     Escribir "Exito";
                  Finsi
                  Escribir Numero1;
+                 Numero1 = Numero1;
+                 Escribir ((Numero1 + 2) + 1) % 4;
           Finsi
 Finsi
 Finalgoritmo
