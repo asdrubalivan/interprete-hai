@@ -16,7 +16,7 @@ from nodos import (BinOpNodo, LlamadaFuncNodo, AsigNodo, RetornoNodo,
         NegacionNodo, SubprogramaNodo, ProgramaNodo, AlgoritmoNodo,
         AlgoritmoSubNodo, LiteralNodo, DummyNodo, VariableNodo)
 
-DEBUG_PARSER = False
+DEBUG_PARSER = True
 
 tokens = clex.tokens
 
@@ -287,7 +287,7 @@ def p_asigrp(t):
     logger.debug("Asignacion, con variable {t0}".format(t0=t[0]))
 
 def p_bloquerp(t):
-    ''' bloquerp : REPITAPARA asigrp COMMA expresion COMMA expresion COLON listasentencias FINRP
+    ''' bloquerp : REPITAPARA asigrp COMMA expresion COMMA asignacion COLON listasentencias FINRP
     '''
     t[0] = BloqueRpNodo([t[2],t[4],t[6],t[8]])
     logger.debug("Bloque Repita para, con variable {t0}".format(t0=t[0]))

@@ -332,6 +332,7 @@ class BloqueRpNodo(Nodo):
             logger.debug("Evaluando sentencias")
             for val in self.sentencias:
                 val.evaluar(maquina)
+            self.expr_incr.evaluar(maquina)
 class NegacionNodo(Nodo):
     def colocar_tipo(self):
         self.tipo = NEGACION

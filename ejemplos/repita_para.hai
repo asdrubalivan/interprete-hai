@@ -1,0 +1,12 @@
+Programa: Repitap
+Variables:
+Entero i;
+Algoritmo:
+Repitapara i=1020 , i>1000 , i -= 1:
+    Escribir i;
+    Si (i % 3) == 0 Entonces
+        Escribir "Multiplo de 3";
+    Finsi
+Finrp
+Finalgoritmo
+Finprograma
