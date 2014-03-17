@@ -26,7 +26,6 @@ precedence = (
     ('left', 'NOT','LT','GT','LE','GE','EQ','NE'),
     ('left', 'PLUS', 'MINUS'),
     ('left', 'TIMES', 'DIVIDE','MOD'),
-    #('left', 'OR', 'AND', 'NOT','LT','GT','LE','GE','EQ','NE'),
 )
 
 
