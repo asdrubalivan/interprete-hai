@@ -21,8 +21,10 @@ DEBUG_PARSER = True
 tokens = clex.tokens
 
 precedence = (
+    ('left', 'OR', 'AND', 'NOT','LT','GT','LE','GE','EQ','NE'),
     ('left', 'PLUS', 'MINUS'),
-    ('left', 'TIMES', 'DIVIDE'),
+    ('left', 'TIMES', 'DIVIDE','MOD'),
+    #('left', 'OR', 'AND', 'NOT','LT','GT','LE','GE','EQ','NE'),
 )
 
 
