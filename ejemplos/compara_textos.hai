@@ -14,8 +14,9 @@ Contrario
                  Escribir "El número es cero";
                  Escribir "\n";
                  Numero1 = 3;
-                 Si Numero1 < 3 Entonces
-                    Escribir "Error";
+                 Numero2 = (Numero1 + 2) + 1;
+                 Si Numero2 == 6 Entonces
+                    Escribir "Exito";
                  Finsi
                  Escribir Numero1;
           Finsi

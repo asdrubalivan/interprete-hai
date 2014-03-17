@@ -106,8 +106,8 @@ class BinOpNodo(Nodo):
             eval_izq = False
             r_izq = self.izquierda
         else:
-            logger.debug("Valor es de tipo {t}".format(type(self.izquierda)))
-            r_izq = self.izquierda
+            logger.debug("Valor es de tipo {t}".format(t=type(self.izquierda)))
+            izq = self.izquierda
             eval_izq = True
         if eval_izq:
             logger.debug("Evaluando lado izquierdo")
