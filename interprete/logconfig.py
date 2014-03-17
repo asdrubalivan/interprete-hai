@@ -12,7 +12,7 @@ logging.config.dictConfig({
     'disable_existing_loggers': False,  # this fixes the problem
     'formatters': {
         'standard': {
-            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+            'format': '%(asctime)s [%(levelname)s] %(name)s: (%(filename)s -> %(funcName)s -> %(lineno)s ) : %(message)s'
         },
     },
     'handlers': {

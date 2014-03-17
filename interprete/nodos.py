@@ -5,6 +5,9 @@ from maquina import Maquina, Simbolo
 from utils import delete_brackets, val_input, is_sequence, is_num
 import re
 from itertools import repeat
+import logging
+import logconfig
+logger = logging.getLogger(__name__)
 
 BINOP = "binop"
 LLAMADAFUNC = "llamadafunc"
@@ -94,30 +97,43 @@ class BinOpNodo(Nodo):
         return self.hijos[1]
     def evaluar(self,maquina):
         if isinstance(self.izquierda,str):
+            logger.debug("Buscamos valor de variable {var}".format(var=self.izquierda))
             r_izq = maquina.obtener_valor_maq(self.izquierda)
+            logger.debug("Valor de r_izq es {}".format(r_izq))
             eval_izq = False
         elif is_num(self.izquierda):
+            logger.debug("Valor es numero {}".format(self.izquierda))
             eval_izq = False
             r_izq = self.izquierda
         else:
+            logger.debug("Valor es de tipo {t}".format(type(self.izquierda)))
             r_izq = self.izquierda
             eval_izq = True
         if eval_izq:
+            logger.debug("Evaluando lado izquierdo")
             izq.evaluar(maquina)
             r_izq = maquina.pop_resultado()
+            logger.debug("Resultado {r}".format(r=r_izq))
         if isinstance(self.derecha,str):
+            logger.debug("Buscamos en derecha la variable {var}".format(var=self.derecha))
             r_der = maquina.obtener_valor_maq(self.izquierda)
+            logger.debug("Tenemos como resultado {r}".format(r=r_der))
             eval_der = False
         elif is_num(self.derecha):
+            logger.debug("Derecha es numero {d}".format(d=self.derecha))
             eval_der = False
             r_der = self.derecha
         else:
+            logger.debug("Valor es de tipo {t}".format(t=type(self.derecha)))
             der = self.derecha
             eval_der = True
         if eval_der:
+            logger.debug("Evaluando derecha")
             der.evaluar(maquina)
             r_der = maquina.pop_resultado()
+            logger.debug("Valor de r_der es {}".format(r_der))
         temp = None
+        logger.debug("Operador es {}".format(self.hoja))
         if self.hoja == '+':
             temp = r_izq + r_der
         elif self.hoja == '-':
@@ -146,11 +162,13 @@ class BinOpNodo(Nodo):
             temp = r_izq != r_der
         else:
             raise BinOpError("Error en operador {}".format(self.hoja))
+        logger.debug("Pushing resultado {}".format(temp))
         maquina.push_resultado(temp)
 class LlamadaFuncNodo(Nodo):
     def colocar_tipo(self):
         self.tipo = LLAMADAFUNC
     def evaluar(self,maquina):
+        logger.debug("Llamando a funcion")#TODO Poner nombre de la funcion
         raise NotImplementedError()
 
 class AsigNodo(Nodo):
@@ -161,26 +179,43 @@ class AsigNodo(Nodo):
         return self.hijos[0]
     @property
     def operador(self):
+        if is_sequence(self.hoja):
+            return self.hoja[0]
         return self.hoja
+    @property
+    def expr(self):
+        return self.hijos[1]
     def evaluar(self,maquina):
-        maquina.asignar(self.idvariable,maquina.pop_resultado(),self.operador)
+        self.expr.evaluar(maquina)
+        res = maquina.pop_resultado()
+        logger.debug("Asignando a {var} {op} {result}".format(var=self.idvariable,op=self.hoja,result=res))
+        maquina.asignar(self.idvariable,res,self.operador)
 
 class RetornoNodo(Nodo):
     def colocar_tipo(self):
         self.tipo = RETORNO
     def evaluar(self,maquina):
+        logger.debug("Nodo retorno")#TODO Poner tipo y nombre del retorno
         raise NotImplementedError()
 
 class EscribirNodo(Nodo):
     def colocar_tipo(self):
         self.tipo = ESCRIBIR
+    @property
+    def expr(self):
+        return self.hijos[0]
     def evaluar(self,maquina):
         #Chequear si es un literal
-        if isinstance(self.hijos[0],Nodo):
-            self.hijos[0].evaluar(maquina)
-            print(maquina.pop_resultado())
+        if isinstance(self.expr,Nodo):
+            logger.debug("Expr es de tipo nodo, evaluando")
+            self.expr.evaluar(maquina)
+            res = maquina.pop_resultado()
+            logger.debug("Resultado es {r}".format(r=res))
+            print(res)
         else:
-            print(self.hijos[0])
+            logger.debug("Expr no es de tipo nodo, es de tipo {t}".format(t=type(self.expr)))
+            logger.debug("Imprimiendo {}".format(self.expr))
+            print(self.expr)
 
 class LeerNodo(Nodo):
     def colocar_tipo(self):
@@ -189,7 +224,10 @@ class LeerNodo(Nodo):
     def variable(self):
         return self.hijos[0]
     def evaluar(self,maquina):
-        maquina.asignar(self.variable,val_input())
+        logger.debug("Leyendo variable")
+        l = val_input()
+        logger.debug("Variable es {v}".format(v=l))
+        maquina.asignar(self.variable,l)
 
 class BloqueSiNodo(Nodo):
     def colocar_tipo(self):
@@ -204,12 +242,16 @@ class BloqueSiNodo(Nodo):
     def si_contrario(self):
         return self.hijos[2]
     def evaluar(self,maquina):
+        logger.debug("Evaluando expresion SiNodo")
         self.expresion.evaluar(maquina)
         result_expr = bool(maquina.pop_resultado())
+        logger.debug("Expresion es {}".format(result_expr))
         if result_expr:
+            logger.debug("Evaluando si afirmativo")
             for val in self.si_afirmativo:
                 val.evaluar(maquina)
         else:
+            logger.debug("Evaluando contrario")
             for val in self.si_contrario:
                 val.evaluar(maquina)
 class BloqueRmNodo(Nodo):
@@ -223,12 +265,16 @@ class BloqueRmNodo(Nodo):
         return self.hijos[1]
     def evaluar(self,maquina):
         while True:
+            logger.debug("Evaluando expresion en repita mientras")
             self.expresion.evaluar(maquina)
             result_expr = bool(maquina.pop_resultado())
+            logger.debug("Resultado de expresion es {r}".format(r=result_expr))
             if result_expr:
+                logger.debug("Evaluando sentencias de repita mientras")
                 for val in self.sentencias:
                     val.evaluar(maquina)
             else:
+                logger.debug("Saliendo")
                 break
 
 class BloqueHmNodo(Nodo):
@@ -240,11 +286,14 @@ class BloqueHmNodo(Nodo):
         return self.hijos[0]
     def evaluar(self,maquina):
         while True:
+            logger.debug("Evaluando sentencias en hacer mientras")
             for val in self.sentencias:
                 val.evaluar(maquina)
             self.expresion.evaluar(maquina)
             result_expr = bool(maquina.pop_resultado())
+            logger.debug("Evaluando expresion, da como resultado {r}".format(result_expr))
             if not result_expr:
+                logger.debug("Saliendo de hacer mientras")
                 break
 
 class BloqueRpNodo(Nodo):
@@ -261,12 +310,18 @@ class BloqueRpNodo(Nodo):
     def sentencias(self):
         return self.hijos[3]
     def evaluar(self,maquina):
+        logger.debug("Evaluando expresion asignacion repita para")
         self.asignacion.evaluar(maquina)
         while True:
+            logger.debug("Evaluando expresion comparacion repita para")
             self.expr_comp.evaluar(maquina)
+            exp = maquina.pop_resultado()
+            logger.debug("Expresion comparacion es {}".format(exp))
             # Comparamos que la expresion no sea cierta
-            if not bool(maquina.pop_resultado()):
+            if not bool(exp):
+                logger.debug("Saliendo de Repita para")
                 break
+            logger.debug("Evaluando sentencias")
             for val in self.sentencias:
                 val.evaluar(maquina)
 class NegacionNodo(Nodo):
@@ -287,23 +342,28 @@ class DeclaracionNodo(Nodo):
 
     def __str__(self):
         temp = " tipovar: {} tam_nodo {}".format(self.tipovar,self.tam_nodo)
-        print(temp)
         return Nodo.__str__(self) + temp
     def colocar_tipo(self):
         self.tipo = DECLARACION
     def colocar_tipovar(self):
         if not self.hijos:
+            logger.error("No hay hijos en declaracion")
             raise NodoError
         if len(self.hijos) > 1:
             temp = ''
             for x in self.hijos[1:]:
                 if x is not None:
                     temp += ''.join([y for y in x])
+            logger.debug("Temp en declaracion es {}".format(temp))
         else:
+            logger.debug("No hay brackets en declaracion")
             temp = None
         self.tipovar = self.hijos[0] # Entero, real, flotante
+        logger.debug("Tipovar es {}".format(self.tipovar))
         if temp:
+            logger.debug("Anadiendo a tipovar valor {}".format(temp))
             self.tipovar += re.sub("[A-Za-z_\d]+","",temp)
+            logger.debug("Tipo var es ahora {}".format(self.tipovar))
     def evaluar(self,maquina):
         maquina.anadir_var(Simbolo(self.hoja,delete_brackets(self.tipovar),self.tam_nodo))
 class ProgramaBaseNodo(Nodo):
@@ -321,10 +381,14 @@ class ProgramaNodo(ProgramaBaseNodo):
     def colocar_tipo(self):
         self.tipo = PROGRAMA
     def evaluar(self,maquina):
+        logger.debug("Colocando push_scope en Programanodo")#TODO poner el id
         maquina.push_scope()
+        logger.debug("Declarando variables")
         for val in self.progvariables:
             val.evaluar(maquina)
+        logger.debug("Evaluando algoritmo")
         self.algoritmo.evaluar(maquina)
+        logger.debug("Saliendo de programa nodo")
         maquina.pop_scope()
 
 class SubprogramaNodo(ProgramaBaseNodo):
@@ -337,6 +401,7 @@ class LiteralNodo(Nodo):
     def literal(self):
         return self.hoja
     def evaluar(self,maquina):
+        logger.debug("Colocando resultado de literalnodo {}".format(self.literal))
         maquina.push_resultado(self.literal)
 
 class AlgoritmoBaseNodo(Nodo):
@@ -347,6 +412,7 @@ class AlgoritmoBaseNodo(Nodo):
     def sentencias(self):
         pass
     def _evaluar(self,maquina):
+        logger.debug("Evaluando sentencias en AlgoritmoBaseNodo")
         for val in self.sentencias:
             val.evaluar(maquina)
 
@@ -355,6 +421,7 @@ class AlgoritmoNodo(AlgoritmoBaseNodo):
     def sentencias(self):
         return self.hijos[0]
     def evaluar(self,maquina):
+        logger.debug("Evaluando AlgorimoNodo")
         self._evaluar(maquina)
 class AlgoritmoSubNodo(AlgoritmoBaseNodo):
     @property
@@ -364,8 +431,10 @@ class AlgoritmoSubNodo(AlgoritmoBaseNodo):
         self.tipo = ALGORITMOSUB
     def evaluar(self,maquina):
         try:
+            logger.debug("Evaluando AlgoritmoSubNodo")
             self._evaluar(maquina)
         except RetornoSenal:
+            logger.debug("Senal de Retorno")
             pass
         
 
