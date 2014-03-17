@@ -1,7 +1,8 @@
 Programa: ComparaNumeros
 Variables:
 Entero NUMERO;
-Entero Numero1,Numero2;
+Entero Numero1,Numero2,Numero3;
+Caracter x;
 Algoritmo:
 Escribir "Introduzca un número ";
 Leer NUMERO;
@@ -19,8 +20,11 @@ Contrario
                     Escribir "Exito";
                  Finsi
                  Escribir Numero1;
+                 x = "ojala";
+                 Escribir x;
                  Numero1 = Numero1;
-                 Escribir ((Numero1 + 2) + 1) % 4;
+                 Numero3 = 1;
+                 Escribir ((Numero1 + Numero3) + 1) % 3;
           Finsi
 Finsi
 Finalgoritmo

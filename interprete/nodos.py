@@ -86,6 +86,13 @@ class DummyNodo(Nodo):
     def evaluar(self,maquina):
         pass
 
+class VariableNodo(Nodo):
+    @property
+    def nombre(self):
+        return self.hijos[0]
+    def evaluar(self,maquina):
+        maquina.push_resultado(maquina.obtener_valor_maq(self.nombre))
+
 class BinOpNodo(Nodo):
     def colocar_tipo(self):
         self.tipo = BINOP
@@ -97,6 +104,7 @@ class BinOpNodo(Nodo):
         return self.hijos[1]
     def evaluar(self,maquina):
         if isinstance(self.izquierda,str):
+            #TODO Revisar si este instanceof es necesario
             logger.debug("Buscamos valor de variable {var}".format(var=self.izquierda))
             r_izq = maquina.obtener_valor_maq(self.izquierda)
             logger.debug("Valor de r_izq es {}".format(r_izq))

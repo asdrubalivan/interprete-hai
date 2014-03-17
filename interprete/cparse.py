@@ -14,7 +14,7 @@ from nodos import (BinOpNodo, LlamadaFuncNodo, AsigNodo, RetornoNodo,
         VoidNodo, DeclaracionNodo, LeerNodo, EscribirNodo,
         BloqueSiNodo, BloqueRmNodo, BloqueHmNodo, BloqueRpNodo,
         NegacionNodo, SubprogramaNodo, ProgramaNodo, AlgoritmoNodo,
-        AlgoritmoSubNodo, LiteralNodo, DummyNodo)
+        AlgoritmoSubNodo, LiteralNodo, DummyNodo, VariableNodo)
 
 DEBUG_PARSER = False
 
@@ -168,7 +168,7 @@ def p_idvariable(t):
     temp = t[1]
     if t[2] is not None:
         temp += t[2]
-    t[0] = temp
+    t[0] = VariableNodo([temp])  
     logger.debug("idvariable : ID bracketsvar t[0] = {t0}".format(t0=t[0]))
 
 def p_bracketsvar(t):

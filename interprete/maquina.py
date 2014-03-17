@@ -128,7 +128,7 @@ class Maquina(object):
     def get_simbolo(self,nombre):
         return self.current_scope()[strip_del_brackets(nombre)]
     def get_valores_ids(self,ids):
-        return tuple([self.obtener_valor_maq(x) for x in ids]) 
+        return tuple([self.obtener_valor_maq(x) for x in ids])
     def obtener_valor_maq(self,nombre):
         #Es un entero?
         if re.compile("\d+").match(nombre):
@@ -143,7 +143,8 @@ class Maquina(object):
             return simb.obt_valor()
         else:
             raise MaquinaError("Nombre no definido {nombre}".format(nombre=delete_brackets(nombre)))
-    def asignar(self,nombre,valor,operador="="):
+    def asignar(self,nodo,valor,operador="="):
+        nombre = nodo.nombre
         if self.in_scope(nombre):
             simb = self.get_simbolo(nombre)
             if tiene_brackets(nombre) and simb.asegurar_brackets(nombre):
