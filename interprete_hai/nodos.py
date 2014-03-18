@@ -288,10 +288,10 @@ class BloqueRmNodo(Nodo):
 class BloqueHmNodo(Nodo):
     @property
     def expresion(self):
-        return self.hijos[1]
+        return self.hijos[0]
     @property
     def sentencias(self):
-        return self.hijos[0]
+        return self.hijos[1]
     def evaluar(self,maquina):
         while True:
             logger.debug("Evaluando sentencias en hacer mientras")
@@ -299,7 +299,7 @@ class BloqueHmNodo(Nodo):
                 val.evaluar(maquina)
             self.expresion.evaluar(maquina)
             result_expr = bool(maquina.pop_resultado())
-            logger.debug("Evaluando expresion, da como resultado {r}".format(result_expr))
+            logger.debug("Evaluando expresion, da como resultado {r}".format(r=result_expr))
             if not result_expr:
                 logger.debug("Saliendo de hacer mientras")
                 break
@@ -329,9 +329,10 @@ class BloqueRpNodo(Nodo):
             if not bool(exp):
                 logger.debug("Saliendo de Repita para")
                 break
-            logger.debug("Evaluando sentencias")
+            logger.debug("Evaluando sentencias repita para")
             for val in self.sentencias:
                 val.evaluar(maquina)
+            logger.debug("Evaluando expresion de incremento en Repita para")
             self.expr_incr.evaluar(maquina)
 class NegacionNodo(Nodo):
     def colocar_tipo(self):

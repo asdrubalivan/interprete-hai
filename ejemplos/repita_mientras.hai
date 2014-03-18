@@ -1,0 +1,16 @@
+Programa: Repitam
+Variables:
+    Entero i,mod;
+Algoritmo:
+    i = 0;
+    Leer mod;
+    Repitamientras i<10:
+        Escribir i;
+        Si i % mod == 0 && i > 0 Entonces
+            Escribir "Multiplo de ";
+            Escribir mod;
+        Finsi
+        i = i + 1;
+    Finrm
+Finalgoritmo
+Finprograma

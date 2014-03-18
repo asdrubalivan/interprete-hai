@@ -1,0 +1,16 @@
+Programa: Hacerm
+Variables:
+    Entero i,mod;
+Algoritmo:
+    i = 0;
+    Leer mod;
+    Haga:
+        Escribir i;
+        Si i % mod == 0 && i > 0 Entonces
+            Escribir "Multiplo de ";
+            Escribir mod;
+        Finsi
+        i = i + 1;
+    Mientras(i<10)
+Finalgoritmo
+Finprograma

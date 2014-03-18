@@ -44,7 +44,7 @@ coverage.xml
 .ropeproject
 
 # pythoscope
-interprete/.pythoscope
+interprete_hai/.pythoscope
 
 # Django stuff:
 *.log
