@@ -1,0 +1,17 @@
+Programa: Repitap
+Variables:
+Entero i;
+Entero j[20];
+Algoritmo:
+Repitapara i=0 , i<20 , i += 1:
+    Escribir i;
+    Si i % 3 == 0 Entonces
+        Escribir "Multiplo de 3";
+    Finsi
+    j[i] = i;
+Finrp
+Repitapara i=0 , i<20 , i += 1:
+    Escribir j[i];
+Finrp
+Finalgoritmo
+Finprograma

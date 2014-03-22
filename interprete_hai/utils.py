@@ -41,7 +41,7 @@ def strip_del_brackets(string):
     return delete_brackets(string).strip()
 
 def numeros_bracket(string):
-    return [match.group("num") for match in re.finditer(REGEX_CAPTURE,string)]
+    return [int(match.group("num")) for match in re.finditer(REGEX_CAPTURE,string)]
 
 def ids_bracket(string):
     return [match.group("ids") for match in re.finditer(REGEX_BRACKETS_ID,string)]
