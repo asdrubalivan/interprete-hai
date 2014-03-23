@@ -34,6 +34,8 @@ reserved = ('PROGRAMA',
         'ENTONCES',
         'CONTRARIO',
         'FINSI',
+        'FINLINEA',
+        'FINDELINEA',
         )
 
 t_ignore = ' \t\x0c'

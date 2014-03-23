@@ -1,7 +1,7 @@
 #!/usr/local/bin/python
 # coding: utf-8
 from abc import ABCMeta, abstractmethod, abstractproperty
-from maquina import Maquina, Simbolo
+from maquina import Maquina, Simbolo, DummyError
 from utils import delete_brackets, val_input, is_sequence, is_num
 import re
 from itertools import repeat
@@ -83,8 +83,15 @@ class Nodo(object):
         pass
 
 class DummyNodo(Nodo):
+    @property
+    def expr(self):
+        return self.hijos[0]
     def evaluar(self,maquina):
-        pass
+        try:
+            self.expr.evaluar(maquina)
+            maquina.pop_resultado(excepcion=True)
+        except DummyError:
+            pass
 
 class VariableNodo(Nodo):
     @property
@@ -92,6 +99,7 @@ class VariableNodo(Nodo):
         return self.hijos[0]
     def evaluar(self,maquina):
         maquina.push_resultado(maquina.obtener_valor_maq(self.nombre))
+
 
 class BinOpNodo(Nodo):
     def colocar_tipo(self):
@@ -175,9 +183,23 @@ class BinOpNodo(Nodo):
 class LlamadaFuncNodo(Nodo):
     def colocar_tipo(self):
         self.tipo = LLAMADAFUNC
+    @property
+    def nombre(self):
+        return self.hoja
+    @property
+    def params(self):
+        if self.hijos[0] is None:
+            return []
+        return self.hijos[0]
     def evaluar(self,maquina):
-        logger.debug("Llamando a funcion")#TODO Poner nombre de la funcion
-        raise NotImplementedError()
+        logger.debug("Llamando a funcion {n}".format(n=self.nombre))#TODO Poner nombre de la funcion
+        logger.debug("Parametros {p}".format(p=self.params))
+        val_exp = []
+        for val in self.params:
+            val.evaluar(maquina)
+            val_exp.append(maquina.pop_resultado())
+        maquina.push_pila_func(val_exp)
+        maquina.get_subprograma(self.nombre).evaluar(maquina)
 
 class AsigNodo(Nodo):
     def colocar_tipo(self):
@@ -232,7 +254,7 @@ class LeerNodo(Nodo):
     def variable(self):
         return self.hijos[0]
     def evaluar(self,maquina):
-        logger.debug("Leyendo variable")
+        logger.debug("Leyendo variable {v}".format(v=self.variable))
         l = val_input()
         logger.debug("Variable es {v}".format(v=l))
         maquina.asignar(self.variable,l)
@@ -355,6 +377,9 @@ class DeclaracionNodo(Nodo):
         return Nodo.__str__(self) + temp
     def colocar_tipo(self):
         self.tipo = DECLARACION
+    @property
+    def nombre(self):
+        return self.hoja
     def colocar_tipovar(self):
         if not self.hijos:
             logger.error("No hay hijos en declaracion")
@@ -375,6 +400,7 @@ class DeclaracionNodo(Nodo):
             self.tipovar += re.sub("[A-Za-z_\d]+","",temp)
             logger.debug("Tipo var es ahora {}".format(self.tipovar))
     def evaluar(self,maquina):
+        logger.debug("DeclaracionNodo: Colocando var {}".format(str(self)))
         maquina.anadir_var(Simbolo(self.hoja,delete_brackets(self.tipovar),self.tam_nodo))
 class ProgramaBaseNodo(Nodo):
     def id(self):
@@ -384,6 +410,8 @@ class ProgramaBaseNodo(Nodo):
 class ProgramaNodo(ProgramaBaseNodo):
     @property
     def progvariables(self):
+        if self.hijos[0] is None:
+            return []
         return self.hijos[0]
     @property
     def algoritmo(self):
@@ -404,6 +432,45 @@ class ProgramaNodo(ProgramaBaseNodo):
 class SubprogramaNodo(ProgramaBaseNodo):
     def colocar_tipo(self):
         self.tipo = SUBPROGRAMA
+    @property
+    def subprogvariables(self):
+        if self.hijos[2] is None:
+            return []
+        return self.hijos[2]
+    @property
+    def tipo_retorno(self):
+        return self.hijos[0]
+    @property
+    def args(self):
+        if self.hijos[1] is None:
+            return []
+        return self.hijos[1]
+    @property
+    def algoritmo(self):
+        return self.hijos[3]
+    @property
+    def nombre(self):
+        return self.hoja
+    def evaluar(self,maquina):
+        logger.debug("Colocando push_scope en Subprogramanodo")#TODO poner el id
+        maquina.push_scope()
+        logger.debug("Colocando argumentos")
+        logger.debug("Argumentos son: {arg}".format(arg=self.args))
+        for val in self.args:
+            val.evaluar(maquina)
+        logger.debug("Declarando variables en subprogramanodo")
+        for val in self.subprogvariables:
+            val.evaluar(maquina)
+        valores_pila = maquina.pop_pila_func()
+        if len(valores_pila) != len(self.args):
+            raise RuntimeError("valores_pila y self.args de distinta longitud")
+        for val_pila, arg in zip(valores_pila,self.args):
+            maquina.asignar(arg,val_pila)
+        logger.debug("Evaluando algoritmo subprogramanodo")
+        self.algoritmo.evaluar(maquina)
+        logger.debug("Saliendo de subprogramanodo")
+        maquina.pop_scope()
+    
 class LiteralNodo(Nodo):
     def colocar_tipo(self):
         self.tipo = LITERAL
@@ -447,6 +514,10 @@ class AlgoritmoSubNodo(AlgoritmoBaseNodo):
             logger.debug("Senal de Retorno")
             pass
         
+class FinLineaNodo(Nodo):
+    def evaluar(self,maquina):
+        logger.debug("Fin de linea")
+        print()
 
 if __name__=='__main__':
     '''tree = [BinOpNodo(

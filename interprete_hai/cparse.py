@@ -14,7 +14,8 @@ from nodos import (BinOpNodo, LlamadaFuncNodo, AsigNodo, RetornoNodo,
         VoidNodo, DeclaracionNodo, LeerNodo, EscribirNodo,
         BloqueSiNodo, BloqueRmNodo, BloqueHmNodo, BloqueRpNodo,
         NegacionNodo, SubprogramaNodo, ProgramaNodo, AlgoritmoNodo,
-        AlgoritmoSubNodo, LiteralNodo, DummyNodo, VariableNodo)
+        AlgoritmoSubNodo, LiteralNodo, DummyNodo, VariableNodo,
+        FinLineaNodo)
 
 DEBUG_PARSER = True
 
@@ -76,6 +77,7 @@ def p_subprograma(t):
     ''' subprograma : SUBPROGRAMA COLON tiporetorno ID LPAREN argssubp RPAREN progvariables algoritmosub FINSUBPROGRAMA '''
     t[0] = SubprogramaNodo([t[3],t[6],t[8],t[9]],t[4])
     logger.debug("Subprograma nodo: {}".format(t[0]))
+    
 
 def p_tiporetorno(t):
     ''' tiporetorno : tipo optbrackets
@@ -239,8 +241,18 @@ def p_sentencia(t):
 
 def p_sentencia_expr(t):
     ''' sentencia : expresion '''
-    t[0] = DummyNodo()
+    t[0] = DummyNodo([t[1]])
     logger.debug("Sentencia dummy")
+
+def p_sentencia_finlinea(t):
+    ''' sentencia : finlinea '''
+    t[0] = t[1]
+
+def p_finlinea(t):
+    ''' finlinea : FINLINEA
+                 | FINDELINEA
+    '''
+    t[0] = FinLineaNodo()
 
 def p_senleer(t):
     ''' senleer : LEER idvariable '''
@@ -338,20 +350,24 @@ def p_literal(t):
 
 def p_llamadafunc(t):
     ''' llamadafunc : ID LPAREN arglista RPAREN '''
-    t[0] = LlamadaFuncNodo(t[3],t[1])
+    t[0] = LlamadaFuncNodo([t[3]],t[1])
     logger.debug("Llama de funcion con variable {t0}".format(t0=t[0]))
 
 def p_arglista(t):
     ''' arglista : expresion
     '''
-    t[0] = [t[1]]
+    t[0] = t[1]
     logger.debug("Lista de argumenos variable {t0}".format(t0=t[0]))
 
 def p_arglista_listas(t):
     ''' arglista : arglista COMMA expresion '''
-    t[0] = [t[1]]
+    logger.debug("Metiendo en lista")
+    t[0] = t[1]
     if t[3] is not None:
-        t[0] += t[3]
+        if not isinstance(t[0],list):
+            t[0] = [t[0]]
+        t[0].append(t[3])
+        logger.debug("T[0] es {t0}, T[3] es {t3}".format(t0=t[0],t3=t[3]))
         logger.debug("Colocando nueva expresion en arglista {t3}".format(t3=t[3]))
     logger.debug("Lista de argumentos con variable {t0}".format(t0=t[0]))
 
@@ -411,7 +427,7 @@ def p_asignador(t):
 def p_argssubp(t):
     ''' argssubp : paramsub
     '''
-    t[0] = t[1]
+    t[0] = [t[1]]
     logger.debug("Argssub : paramsub con variable {t0}".format(t0=t[0]))
 
 def p_argssubp_comma(t):
@@ -419,7 +435,7 @@ def p_argssubp_comma(t):
     '''
     t[0] = [t[1]]
     if t[3] is not None:
-        t[0] += t[3]
+        t[0].extend(t[3])
         logger.debug("Colocando argsub {}".format(t[3]))
     logger.debug("Expresion argsub : paramsub COMMA argssubp con variable {t0}".format(t0=t[0]))
 
@@ -430,7 +446,7 @@ def p_argssubp_empty(t):
 def p_paramsub(t):
     ''' paramsub : tiporetorno ID '''
     t[1].hoja = t[2] #Anadimos la ID
-    t[0] = [t[1]]
+    t[0] = t[1]
     logger.debug("paramsub : tiporetorno con variable {t0}".format(t0=t[0]))
 
 def p_optbrackets(t):

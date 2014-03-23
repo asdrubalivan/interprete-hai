@@ -3,11 +3,17 @@ from utils import (delete_brackets, count_brackets,
         tiene_brackets, tipo, esta_en_limites,
         is_sequence)
 import re
+import logging
+import logconfig
+logger = logging.getLogger(__name__)
 ENTERO = "Entero"
 REAL = "Real"
 CARACTER = "Caracter"
 
 class SimboloError(Exception):
+    pass
+
+class DummyError(Exception):
     pass
 
 class Simbolo(object):
@@ -22,34 +28,59 @@ class Simbolo(object):
         else:
             self.valor = {}
         self.tipo = tipo
+        logger.debug("Iniciando {s}".format(s=str(self)))
     def __eq__(self,otro):
         return (self.nombre == otro.nombre) and (self.tam_vec == otro.tam_vec) and \
             (self.valor == otro.valor) and (self.tipo == otro.tipo)
+    def __str__(self):
+        return "Simbolo '{nombre}', Tipo {tipo}, Tam {tam}, Valor {val}".format(nombre=self.nombre,tipo=self.tipo,tam=self.tam_vec,val=self.valor)
     def esta_en_limites(self,posicion):
+        logger.debug("Calculando si simbolo esta en limites")
         if not is_sequence(self.tam_vec):
+            logger.debug("No esta en secuencia, retornamos True")
             return True
-        return esta_en_limites(posicion,self.tam_vec)
+        ret = esta_en_limites(posicion,self.tam_vec)
+        if ret:
+            logger.debug("Esta en limites")
+        else:
+            logger.debug("No esta en limites")
+        return ret
     def brackets_necesarias(self):
+        logger.debug("Calculando las brackets necesarias")
         if not is_sequence(self.tam_vec):
+            logger.debug("No necesitamos ninguna")
             return 0
-        return len(self.tam_vec)
+        ret = len(self.tam_vec)
+        logger.debug("{} pares necesarios".format(ret))
+        return ret
     def asegurar_brackets(self,nombre_var):
-        return self.nombre == strip_del_brackets(nombre_var) and self.brackets_necesarias() == count_brackets(nombre_var)
+        ret = self.nombre == strip_del_brackets(nombre_var) and self.brackets_necesarias() == count_brackets(nombre_var)
+        if ret:
+            logger.debug("Brackets aseguradas")
+        else:
+            logger.debug("Brackets NO aseguradas")
+        return ret
     def obt_valor(self,val_corchetes=None):
         if val_corchetes is None:
             if self.valor is not None:
+                logger.debug("Retornando Valor {val}".format(val=self.valor))
                 return self.valor
             else:
+                logger.warning("Valor no definido")
                 raise SimboloError("No inicializado {}".format(self.nombre))
         if not self.esta_en_limites(val_corchetes):
             raise SimboloError("Fuera de rango {}".format(val_corchetes))
         #Tiene corchetes
         try:
+            logger.debug("Tratando de retornar valor con clave {}".format(val_corchetes))
             return self.valor[val_corchetes]
         except KeyError:
+            logger.warning("Valor no definido")
             raise SimboloError("No inicializado {valores}".format(valores=val_corchetes))
     def asignar(self,valor,posicion=None,asignador="="):
+        logger.debug("Tratando de asignar {v} con asignador {a}".format(v=valor,a=asignador))
         if tipo(valor) == strip_del_brackets(self.tipo):
+            logger.debug("Topos concuerdan")
             if posicion:
                 if self.esta_en_limites(posicion):
                     if asignador == "=":
@@ -72,6 +103,7 @@ class Simbolo(object):
                 else:
                     raise SimboloError("Asignacion invalida '{}'".format(asignador))
         else:
+            logger.warning("Error, tipo invalido {t}".format(t=tipo(valor)))
             raise SimboloError("Tipo invalido {t}".format(t=tipo(valor)))
 class MaquinaError(Exception):
     pass
@@ -83,11 +115,16 @@ class Maquina(object):
         self.scopes = []
         self.tree = tree
         self.ultimo_resultado = None
+        self.pila_funciones = []
     def __str__(self):
         return "Maquina: Programa {programa}, Subprogramas {sub}, Scopes {scopes}, Tree {tree}, ultimo resultado {ult}".format(sub=self.subprogramas,
                 scopes=self.scopes,tree=self.tree,programa = self.programa,ult=self.ultimo_resultado)
     def __repr__(self):
         return str(self)
+    def push_pila_func(self,r):
+        self.pila_funciones.append(r)
+    def pop_pila_func(self):
+        return self.pila_funciones.pop()
     def push_scope(self):
         self.scopes.append({}) #Diccionario es el scope
     def pop_scope(self):
@@ -103,6 +140,8 @@ class Maquina(object):
         return var in self.current_scope()
     def in_subprogramas(self,var):
         return var in self.subprogramas
+    def get_subprograma(self,key):
+        return self.subprogramas[key]
     def esta_definida(self,var):
         return self.in_scope(var) or self.in_subprogramas(var)
     def meter_programas_subprogramas(self):
@@ -118,7 +157,9 @@ class Maquina(object):
             raise MaquinaError("Self.tree vacio <-- {tree} -->".format(tree=self.tree))
     def push_resultado(self,r):
         self.ultimo_resultado = r
-    def pop_resultado(self):
+    def pop_resultado(self,excepcion=False):
+        if self.ultimo_resultado is None and excepcion:
+            raise DummyError("Resultado es none")
         ret_val = self.ultimo_resultado
         return ret_val
     #NOTE Metodo muy importante

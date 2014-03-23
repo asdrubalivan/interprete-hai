@@ -1,0 +1,30 @@
+Programa: Repitam
+Variables:
+    Entero j,k,a;
+    Entero z[3];
+Algoritmo:
+    Escribir "Imprimiendo fin linea";
+    Finlinea;
+    Escribir "Final de fin de linea";
+    Leer j;
+    k=1;
+    a=6;
+    Rm(j,k,a);
+Finalgoritmo
+Finprograma
+
+Subprograma: Rm(Entero j, Entero p, Entero z)
+Variables:
+    Entero i;
+Algoritmo:
+    i = 0;
+    Repitamientras i<j:
+        Escribir i;
+        i = i + 1;
+    Finrm
+    Escribir "K";
+    Escribir p;
+    Escribir "A";
+    Escribir z;
+Finalgoritmo
+Finsubprograma
