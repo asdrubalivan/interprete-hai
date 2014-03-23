@@ -246,12 +246,14 @@ def p_sentencia_expr(t):
 
 def p_sentencia_finlinea(t):
     ''' sentencia : finlinea '''
+    logger.debug("Sentencia : finlinea")
     t[0] = t[1]
 
 def p_finlinea(t):
     ''' finlinea : FINLINEA
                  | FINDELINEA
     '''
+    logger.debug("Nodo fin de linea")
     t[0] = FinLineaNodo()
 
 def p_senleer(t):
