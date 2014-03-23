@@ -241,11 +241,11 @@ class EscribirNodo(Nodo):
             self.expr.evaluar(maquina)
             res = maquina.pop_resultado()
             logger.debug("Resultado es {r}".format(r=res))
-            print(res)
+            print(res,end='')
         else:
             logger.debug("Expr no es de tipo nodo, es de tipo {t}".format(t=type(self.expr)))
             logger.debug("Imprimiendo {}".format(self.expr))
-            print(self.expr)
+            print(self.expr,end='')
 
 class LeerNodo(Nodo):
     def colocar_tipo(self):
