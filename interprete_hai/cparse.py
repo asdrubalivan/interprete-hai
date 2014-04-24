@@ -93,8 +93,8 @@ def p_tiporetorno(t):
 
 def p_tiporetorno_empty(t):
     ''' tiporetorno : empty '''
-    t[0] = VoidNodo()
-    logger.debug("Colocando VoidNodo")
+    t[0] = None
+    logger.debug("Colocando None")
 
 def p_tipo(t):
     ''' tipo : ENTERO 
@@ -349,6 +349,7 @@ def p_expression_unvalor(t):
                   | idvariable
                   | llamadafunc
                   | operacionbin
+                  | retorno
     '''
     t[0] = t[1]
     logger.debug("Expresion con variable {t0}".format(t0=t[0]))
@@ -370,7 +371,7 @@ def p_llamadafunc(t):
 def p_arglista(t):
     ''' arglista : expresion
     '''
-    t[0] = t[1]
+    t[0] = [t[1]]
     logger.debug("Lista de argumenos variable {t0}".format(t0=t[0]))
 
 def p_arglista_listas(t):
@@ -399,6 +400,7 @@ def p_operacionbin(t):
                      | expresion OR expresion
                      | expresion AND expresion
                      | expresion LT expresion
+                     | expresion LE expresion
                      | expresion GT expresion
                      | expresion GE expresion
                      | expresion EQ expresion
@@ -408,23 +410,6 @@ def p_operacionbin(t):
     t[0] = BinOpNodo([t[1],t[3]],t[2])
     logger.debug("Operacion binaria {izq} {op} {der}".format(izq=t[1],der=t[3],op=t[2]))
 
-def p_operador(t):
-    ''' operador : PLUS
-                 | MINUS
-                 | TIMES
-                 | DIVIDE
-                 | MOD
-                 | OR
-                 | AND
-                 | LT
-                 | LE
-                 | GT
-                 | GE
-                 | EQ
-                 | NE
-                 '''
-    
-    t[0] = t[1]
 
 def p_asignacion(t):
     ''' asignacion : idvariable asignador expresion '''
@@ -476,16 +461,11 @@ def p_optbrackets_empty(t):
     pass
 
 def p_retorno(t):
-    ''' retorno : RETORNE idvariable SEMI
+    ''' retorno : RETORNE expresion
     '''
     t[0] = RetornoNodo([t[2]])
     logger.debug("Retorno nodo con variable {t0}".format(t0=t[0]))
 
-#TODO Quitar esto
-def p_retorno_empty(t):
-    ''' retorno : empty '''
-    t[0] = RetornoNodo()
-    logger.debug("Retorno nodo vacio con variable")
 
 #Vacio
 def p_empty(t):

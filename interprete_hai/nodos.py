@@ -2,7 +2,7 @@
 # coding: utf-8
 from abc import ABCMeta, abstractmethod, abstractproperty
 from maquina import Maquina, Simbolo, DummyError
-from utils import delete_brackets, val_input, is_sequence, is_num
+from utils import delete_brackets, val_input, is_sequence, is_num, get_decl_total
 import re
 from itertools import repeat
 import logging
@@ -37,7 +37,10 @@ class BinOpError(NodoError):
     pass
 
 class RetornoSenal(Exception):
-    pass
+    def __init__(self,val_ret):
+        self.val_ret = val_ret
+    def __str__(self):
+        return "Retorno invalido, se trato de retornar el valor {}".format(self.val_ret)
 
 class Nodo(object):
     __metaclass__ = ABCMeta
@@ -231,11 +234,14 @@ class AsigNodo(Nodo):
         maquina.asignar(self.idvariable,res,self.operador)
 
 class RetornoNodo(Nodo):
-    def colocar_tipo(self):
-        self.tipo = RETORNO
+    @property
+    def expr(self):
+        return self.hijos[0]
     def evaluar(self,maquina):
-        logger.debug("Nodo retorno")#TODO Poner tipo y nombre del retorno
-        raise NotImplementedError()
+        self.expr.evaluar(maquina)
+        res = maquina.pop_resultado()
+        raise RetornoSenal(res)
+        
 
 class EscribirNodo(Nodo):
     def colocar_tipo(self):
@@ -425,10 +431,13 @@ class ProgramaNodo(ProgramaBaseNodo):
     @property
     def algoritmo(self):
         return self.hijos[1]
+    @property
+    def variable_retorno(self):
+        return None
     def colocar_tipo(self):
         self.tipo = PROGRAMA
     def evaluar(self,maquina):
-        logger.debug("Colocando push_scope en Programanodo")#TODO poner el id
+        logger.debug("Colocando push_scope en Programanodo")
         maquina.push_scope()
         logger.debug("Declarando variables")
         for val in self.progvariables:
@@ -439,6 +448,9 @@ class ProgramaNodo(ProgramaBaseNodo):
         maquina.pop_scope()
 
 class SubprogramaNodo(ProgramaBaseNodo):
+    def __init__(self,hijos,hoja):
+        ProgramaBaseNodo.__init__(self,hijos,hoja)
+        self.variable_retorno = None
     def colocar_tipo(self):
         self.tipo = SUBPROGRAMA
     @property
@@ -470,13 +482,30 @@ class SubprogramaNodo(ProgramaBaseNodo):
         logger.debug("Declarando variables en subprogramanodo")
         for val in self.subprogvariables:
             val.evaluar(maquina)
+        logger.debug("Colocando variable de retorno auxiliar")
+        nombre_aux = "__" + self.nombre
+        formato_aux = nombre_aux + "{}"
+        x = 0
+        while maquina.esta_definida(nombre_aux):
+            nombre_aux = formato_aux.format(x)
+            x = x + 1
+        if self.tipo_retorno:
+            #Usamos declaracion nodo ya que estamos simulando
+            #la declaracion de una variable
+            self.variable_retorno = DeclaracionNodo(get_decl_total(self.tipo_retorno.tipovar,nombre_aux),hoja=nombre_aux)
+            logger.debug("Variable retorno {}".format(self.variable_retorno))
+            self.variable_retorno.evaluar(maquina)
         valores_pila = maquina.pop_pila_func()
         if len(valores_pila) != len(self.args):
             raise RuntimeError("valores_pila y self.args de distinta longitud")
         for val_pila, arg in zip(valores_pila,self.args):
             maquina.asignar(arg,val_pila)
         logger.debug("Evaluando algoritmo subprogramanodo")
-        self.algoritmo.evaluar(maquina)
+        try:
+            self.algoritmo.evaluar(maquina)
+        except RetornoSenal as r:
+            maquina.asignar(self.variable_retorno.nombre,r.val_ret)
+            maquina.push_resultado(r.val_ret)
         logger.debug("Saliendo de subprogramanodo")
         maquina.pop_scope()
     
@@ -513,15 +542,9 @@ class AlgoritmoSubNodo(AlgoritmoBaseNodo):
     @property
     def sentencias(self):
         return self.hijos[0]
-    def colocar_tipo(self):
-        self.tipo = ALGORITMOSUB
     def evaluar(self,maquina):
-        try:
-            logger.debug("Evaluando AlgoritmoSubNodo")
-            self._evaluar(maquina)
-        except RetornoSenal:
-            logger.debug("Senal de Retorno")
-            pass
+        logger.debug("Evaluando AlgoritmoSubNodo")
+        self._evaluar(maquina)
         
 class FinLineaNodo(Nodo):
     def evaluar(self,maquina):

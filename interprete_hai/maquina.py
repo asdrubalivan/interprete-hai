@@ -212,7 +212,10 @@ class Maquina(object):
         else:
             raise MaquinaError("Nombre no definido {nombre}".format(nombre=delete_brackets(nombre)))
     def asignar(self,nodo,valor,operador="="):
-        nombre = nodo.nombre
+        try:
+            nombre = nodo.nombre
+        except AttributeError:
+            nombre = nodo
         if self.in_scope(nombre):
             simb = self.get_simbolo(nombre)
             if tiene_brackets(nombre): 

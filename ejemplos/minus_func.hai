@@ -1,0 +1,18 @@
+Programa: Fact
+Variables:
+    Entero x;
+Algoritmo:
+    Escribir "Ingrese factorial a calcular: ";
+    Leer x;
+    Escribir factorial(x);
+Finalgoritmo
+Finprograma
+
+Subprograma: Entero factorial(Entero f)
+Algoritmo:
+    Si f <= 1 Entonces
+        Retorne 1;
+    Finsi
+    Retorne f * factorial(f-1);
+Finalgoritmo
+Finsubprograma
