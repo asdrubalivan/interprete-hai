@@ -8,14 +8,14 @@ import logconfig
 logger = logging.getLogger(__name__)
 
 
-from utils import get_decl_total, delete_brackets, numeros_bracket, is_sequence
+from utils import get_decl_total, delete_brackets, numeros_bracket, is_sequence, repeat_none
 
 from nodos import (BinOpNodo, LlamadaFuncNodo, AsigNodo, RetornoNodo,
         VoidNodo, DeclaracionNodo, LeerNodo, EscribirNodo,
         BloqueSiNodo, BloqueRmNodo, BloqueHmNodo, BloqueRpNodo,
         NegacionNodo, SubprogramaNodo, ProgramaNodo, AlgoritmoNodo,
         AlgoritmoSubNodo, LiteralNodo, DummyNodo, VariableNodo,
-        FinLineaNodo)
+        FinLineaNodo, UminusNodo)
 
 DEBUG_PARSER = True
 
@@ -27,6 +27,7 @@ precedence = (
     ('left', 'NOT','LT','GT','LE','GE','EQ','NE'),
     ('left', 'PLUS', 'MINUS'),
     ('left', 'TIMES', 'DIVIDE','MOD'),
+    ('right','UMINUS'),
 )
 
 
@@ -82,7 +83,12 @@ def p_subprograma(t):
 def p_tiporetorno(t):
     ''' tiporetorno : tipo optbrackets
     '''
-    t[0] = DeclaracionNodo([t[1],t[2]])
+    logger.debug("Optbrackets es {}".format(t[2]))
+    if t[2] is None:
+        tam = 0
+    else:
+        tam = len(t[2]) // 2
+    t[0] = DeclaracionNodo([t[1],t[2]],tam_nodo=repeat_none(tam))
     logger.debug("DeclaracionNodo (tiporetorno) {}".format(t[0]))
 
 def p_tiporetorno_empty(t):
@@ -327,6 +333,11 @@ def p_expresion(t):
     t[0] = NegacionNodo([t[2]])
     logger.debug("Expresion negacion, con variable {t0}".format(t0=t[0]))
 
+def p_expresion_uminus(t):
+    ''' expresion : MINUS expresion %prec UMINUS '''
+    t[0] = UminusNodo([t[2]])
+
+
 def p_expression_paren(t):
     ''' expresion : LPAREN expresion RPAREN
     '''
@@ -341,6 +352,7 @@ def p_expression_unvalor(t):
     '''
     t[0] = t[1]
     logger.debug("Expresion con variable {t0}".format(t0=t[0]))
+
 
 def p_literal(t):
     ''' literal : ICONST
@@ -484,7 +496,7 @@ def p_empty(t):
 def p_error(t):
     print("Error")
 
-yacc.yacc(check_recursion=1,optimize=1,debug=DEBUG_PARSER)
+yacc.yacc(check_recursion=1,optimize=0,debug=DEBUG_PARSER)
 
 
 def parse_text(txt):

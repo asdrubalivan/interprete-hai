@@ -180,6 +180,15 @@ class BinOpNodo(Nodo):
             raise BinOpError("Error en operador {}".format(self.hoja))
         logger.debug("Pushing resultado {}".format(temp))
         maquina.push_resultado(temp)
+
+class UminusNodo(Nodo):
+    @property
+    def expr(self):
+        return self.hijos[0]
+    def evaluar(self,maquina):
+        logger.debug("Uminus Nodo")
+        self.expr.evaluar(maquina)
+        maquina.push_resultado(-maquina.pop_resultado())
 class LlamadaFuncNodo(Nodo):
     def colocar_tipo(self):
         self.tipo = LLAMADAFUNC

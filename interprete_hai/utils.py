@@ -4,6 +4,9 @@ import itertools
 import re
 from collections import namedtuple
 from itertools import repeat
+import logging
+import logconfig
+logger = logging.getLogger(__name__)
 ENTERO = "Entero"
 REAL = "Real"
 CARACTER = "Caracter"
@@ -50,11 +53,16 @@ def tiene_brackets(string):
     return re.compile(REGEX_BRACKETS).search(string)
 
 def esta_en_limites(tupla,maximo):
-    if len(tupla) == 0 or len(tupla) != len(maximo):
+    if len(tupla) == 0:
         return False
+    if len(tupla) != len(maximo):
+        return False
+    if all(t is None for t in maximo):
+        return True
     return all(t < m and t >= 0 for t,m in zip(tupla,maximo))
 
 def tipo(val):
+    logger.debug("Tipo de val es {t}, y valor es {val}".format(t=type(val),val=val))
     if isinstance(val,int):
         return ENTERO
     elif isinstance(val,float):
@@ -78,3 +86,11 @@ def is_sequence(arg):
 
 def is_num(arg):
     return isinstance(arg,(int,float))
+
+def is_literal(arg):
+    return isinstance(arg,(int,float,str))
+
+def repeat_none(count):
+    if count == 0:
+        return None
+    return list(repeat(None,count))

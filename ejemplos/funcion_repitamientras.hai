@@ -9,7 +9,7 @@ Algoritmo:
     Leer j;
     k=1;
     a=6;
-    Rm(j,k,a);
+    Rm(j,k,2);
 Finalgoritmo
 Finprograma
 

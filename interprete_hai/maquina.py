@@ -1,8 +1,9 @@
 from utils import (delete_brackets, count_brackets,
         strip_del_brackets, ids_bracket,
         tiene_brackets, tipo, esta_en_limites,
-        is_sequence)
+        is_sequence, is_literal)
 import re
+from copy import deepcopy as copy
 import logging
 import logconfig
 logger = logging.getLogger(__name__)
@@ -79,32 +80,55 @@ class Simbolo(object):
             raise SimboloError("No inicializado {valores}".format(valores=val_corchetes))
     def asignar(self,valor,posicion=None,asignador="="):
         logger.debug("Tratando de asignar {v} con asignador {a}".format(v=valor,a=asignador))
-        if tipo(valor) == strip_del_brackets(self.tipo):
-            logger.debug("Topos concuerdan")
-            if posicion:
-                if self.esta_en_limites(posicion):
+        if is_literal(valor):
+            tipo_sin_br = strip_del_brackets(self.tipo)
+            #NOTE: Se coloca Try ya que quiero que en dado caso se dispare la
+            #bandera de que tipos no concuerdan, para dar un mensaje al usuario
+            if tipo_sin_br == ENTERO:
+                try:
+                    valor = int(valor)
+                except:
+                    pass
+            elif tipo_sin_br == REAL:
+                try:
+                    valor = float(valor)
+                except:
+                    pass
+            if tipo(valor) == tipo_sin_br:
+                logger.debug("Tipos concuerdan")
+                if posicion:
+                    if self.esta_en_limites(posicion):
+                        logger.debug("Esta en limites con posicion {p}".format(p=posicion))
+                        if asignador == "=":
+                            self.valor[posicion] = valor
+                        elif asignador == "+=":
+                            self.valor[posicion] += valor
+                        elif asignador == "-=":
+                            self.valor[posicion] -= valor
+                        else:
+                            raise SimboloError("Asignacion invalida '{}'".format(asignador))
+                    else:
+                        raise SimboloError("Asignacion fuera de rango Posicion: {p}".format(p=posicion))
+                else:
                     if asignador == "=":
-                        self.valor[posicion] = valor
+                        self.valor = valor
                     elif asignador == "+=":
-                        self.valor[posicion] += valor
+                        self.valor += valor
                     elif asignador == "-=":
-                        self.valor[posicion] -= valor
+                        self.valor -= valor
                     else:
                         raise SimboloError("Asignacion invalida '{}'".format(asignador))
-                else:
-                    raise SimboloError("Asignacion fuera de rango Posicion: {p}".format(p=posicion))
             else:
-                if asignador == "=":
-                    self.valor = valor
-                elif asignador == "+=":
-                    self.valor += valor
-                elif asignador == "-=":
-                    self.valor -= valor
-                else:
-                    raise SimboloError("Asignacion invalida '{}'".format(asignador))
+                logger.warning("Error, tipo invalido {t}".format(t=tipo(valor)))
+                raise SimboloError("Tipo invalido {t}".format(t=tipo(valor)))
         else:
-            logger.warning("Error, tipo invalido {t}".format(t=tipo(valor)))
-            raise SimboloError("Tipo invalido {t}".format(t=tipo(valor)))
+            tipos = set(tipo(v) for v in valor.values())
+            if len(tipos) <= 1 and all(self.esta_en_limites(p) for p in valor.keys()):
+                logger.debug("Asignando vector {}".format(valor))
+                self.valor = copy(valor)
+            else:
+                logger.error("Tipos invalidos {}".format(tipos))
+                raise SimboloError("Tipo invalido, tipos {}".format(tipos))
 class MaquinaError(Exception):
     pass
 
@@ -176,11 +200,14 @@ class Maquina(object):
             return int(nombre)
         if self.in_scope(nombre):
             simb = self.get_simbolo(nombre)
-            if tiene_brackets(nombre) and simb.asegurar_brackets(nombre):
-                ids = ids_bracket(nombre)
-                #Ids ya con variable definida
-                ids_def = self.get_valores_ids(ids) # NOTE: Recursividad indirecta
-                return simb.obt_valor(ids_def)
+            if tiene_brackets(nombre): 
+                if simb.asegurar_brackets(nombre):
+                    ids = ids_bracket(nombre)
+                    #Ids ya con variable definida
+                    ids_def = self.get_valores_ids(ids) # NOTE: Recursividad indirecta
+                    return simb.obt_valor(ids_def)
+                else:
+                    raise MaquinaError("Las brackets no concuerdan")
             return simb.obt_valor()
         else:
             raise MaquinaError("Nombre no definido {nombre}".format(nombre=delete_brackets(nombre)))
@@ -188,10 +215,13 @@ class Maquina(object):
         nombre = nodo.nombre
         if self.in_scope(nombre):
             simb = self.get_simbolo(nombre)
-            if tiene_brackets(nombre) and simb.asegurar_brackets(nombre):
-                ids = ids_bracket(nombre)
-                ids_def = self.get_valores_ids(ids)
-                simb.asignar(valor,ids_def,operador)
+            if tiene_brackets(nombre): 
+                if simb.asegurar_brackets(nombre):
+                    ids = ids_bracket(nombre)
+                    ids_def = self.get_valores_ids(ids)
+                    simb.asignar(valor,ids_def,operador)
+                else:
+                    raise MaquinaError("Las brackets no concuerdan")
             else:
                 simb.asignar(valor,asignador=operador)
         else:

@@ -1,0 +1,10 @@
+Programa: Repitam
+Variables:
+    Entero x;
+Algoritmo:
+    x = 3 *(- 1);
+    Escribir x;
+Finalgoritmo
+Finprograma
+
+

@@ -6,9 +6,11 @@ Algoritmo:
     Leer mod;
     Repitamientras i<10:
         Escribir i;
+        Finlinea;
         Si i % mod == 0 && i > 0 Entonces
             Escribir "Multiplo de ";
             Escribir mod;
+            Finlinea;
         Finsi
         i = i + 1;
     Finrm

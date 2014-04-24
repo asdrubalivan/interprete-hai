@@ -2,10 +2,12 @@ Programa: Repitap
 Variables:
 Entero i;
 Algoritmo:
-Repitapara i=1020 , i>1000 , i -= 1:
+Repitapara i= 1020 , i > 1000 , i -= 1:
     Escribir i;
-    Si i % 3 == 0 Entonces
-        Escribir "Multiplo de 3";
+    Finlinea;
+    Si i >= 1005 Entonces
+        Escribir "I es mayor a 1005";
+        Finlinea;
     Finsi
 Finrp
 Finalgoritmo

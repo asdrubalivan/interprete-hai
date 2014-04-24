@@ -1,0 +1,24 @@
+Programa: Repitam
+Variables:
+    Entero test[3];
+    Entero i;
+Algoritmo:
+    Repitapara i=0 , i<3 , i+=1:
+        test[i] = i;
+    Finrp
+    imprimir(test,3);
+Finalgoritmo
+Finprograma
+
+Subprograma: imprimir(Entero[] test,Entero tam)
+Variables:
+    Entero i;
+Algoritmo:
+    Repitapara i=0, i<tam , i+=1:
+        Escribir test[i];
+        Finlinea;
+    Finrp
+Finalgoritmo
+Finsubprograma
+
+
