@@ -1,0 +1,30 @@
+Programa: Salarios
+Variables:
+    Real horas,s;
+Algoritmo:
+    Escribir "Ingrese sus horas trabajadas: ";
+    Leer horas;
+    s = salario(horas);
+    Escribir "Su salario es ";
+    Escribir s;
+    Finlinea;
+Finalgoritmo
+Finprograma
+
+Subprograma: Real salario(Real horas)
+Algoritmo:
+    Si horas > 100 Entonces
+        Retorne horas * 200;
+    Contrario
+        Si horas > 50 Entonces
+            Retorne horas * 150.1;
+        Contrario
+            Si horas > 10 Entonces
+                Retorne horas * 80;
+            Contrario
+                Retorne horas * 10;
+            Finsi
+        Finsi
+    Finsi
+Finalgoritmo
+Finsubprograma
