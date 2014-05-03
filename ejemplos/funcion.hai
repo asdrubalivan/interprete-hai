@@ -11,6 +11,6 @@ Finprograma
 
 Subprograma: funcion(Entero x,Entero y, Real[] hola)
 Algoritmo:
-    Escribir "Hola;";
+    //Escribir "Hola;";
 Finalgoritmo
 Finsubprograma

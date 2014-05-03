@@ -534,6 +534,8 @@ class AlgoritmoBaseNodo(Nodo):
 class AlgoritmoNodo(AlgoritmoBaseNodo):
     @property
     def sentencias(self):
+        if not self.hijos[0]:
+            return []
         return self.hijos[0]
     def evaluar(self,maquina):
         logger.debug("Evaluando AlgorimoNodo")
@@ -541,6 +543,8 @@ class AlgoritmoNodo(AlgoritmoBaseNodo):
 class AlgoritmoSubNodo(AlgoritmoBaseNodo):
     @property
     def sentencias(self):
+        if not self.hijos[0]:
+            return []
         return self.hijos[0]
     def evaluar(self,maquina):
         logger.debug("Evaluando AlgoritmoSubNodo")
