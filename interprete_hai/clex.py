@@ -170,11 +170,21 @@ def t_ICONST(t):
     return t
 
 
+STRING_ESCAPE_CARAC = {
+    r'\\':"\\",
+    r'\t':'\t',
+    r'\n':'\n',
+    r'\'':'\'',
+    r'\"':'\"',
+}
 
 # String
 def t_SCONST(t):
     r'(\"([^\\\n]|(\\.))*?\")'
-    t.value = t.value[1:-1]
+    temp = t.value[1:-1]
+    for unescaped, character in STRING_ESCAPE_CARAC.items():
+        temp = temp.replace(unescaped,character)
+    t.value = temp
     return t
 
 # Equals
