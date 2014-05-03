@@ -36,6 +36,8 @@ reserved = ('PROGRAMA',
         'FINSI',
         'FINLINEA',
         'FINDELINEA',
+        'CLASE',
+        'EXTIENDE',
         )
 
 t_ignore = ' \t\x0c'
