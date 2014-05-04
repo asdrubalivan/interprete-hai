@@ -5,6 +5,7 @@ Algoritmo:
 Escribir 123.34;
 Escribir "Mi nombre es Asdrubal, y estoy poniendo un Repitamientras por si acaso";
 miVariable = 3;
-miVariable2 -= 2;
+miVariable += -5;
+Escribir miVariable;
 Finalgoritmo
 Finprograma

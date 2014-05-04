@@ -9,6 +9,13 @@ from os import path, chdir, listdir
 from glob import glob
 import re
 
+#Esto se hace para que el autocompletado funcione en Windows
+try:
+    import pyreadline
+except ImportError:
+    pass
+
+
 def crear_parser():
     parser = ArgumentParser(description="Procesa archivos")
     parser.add_argument('archivo',help="Path del archivo",type=str,nargs='?')
@@ -48,7 +55,7 @@ class ComandosInterprete(Cmd):
     salir: para salir
     *******************************************
     '''.format(version=VERSION)
-    currdir = None
+    _currdir = None
     def do_hai(self,archivo):
         if not archivo:
             print("No se incluyo archivo, el mismo es obligatorio")
@@ -62,20 +69,20 @@ class ComandosInterprete(Cmd):
     def help_salir(self):
         print("Sale de la línea de comandos")
     def help_archivos(self):
-        print("Lista los archivos en el directorio en el que se está trabajando, en este caso {d}".format(d=self.currdir if self.currdir else path.realpath("")))
+        print("Lista los archivos en el directorio en el que se está trabajando, en este caso {d}".format(d=self.currdir))
     def help_cd(self):
-        print("Cambia el directorio de trabajo al especificado en el comando, por ejemplo para cambiar al directorio actual se escribiría\ncd {}".format(self.currdir if self.currdir else path.realpath("")))
+        print("Cambia el directorio de trabajo al especificado en el comando, por ejemplo para cambiar al directorio actual se escribiría\ncd {}".format(self.currdir))
     def do_salir(self,linea):
         sys.exit(0)
     def do_cd(self,dir_):
         if not dir_:
-            self.currdir = path.realpath("")
-            print("Directorio cambiado a ubicación original {}".format(self.currdir))
+            self._currdir = path.realpath("")
+            print("Directorio cambiado a ubicación original {}".format(self._currdir))
         else:
             if path.isdir(dir_):
                 temp = path.realpath(dir_)
                 chdir(temp)
-                self.currdir = temp
+                self._currdir = temp
                 print("Directorio actual cambiado a {dir_}".format(dir_=temp))
             else:
                 print("\"{dir_}\" no es un directorio".format(dir_=dir_))
@@ -85,12 +92,11 @@ class ComandosInterprete(Cmd):
             ret_val +=[".."]
         return sorted(ret_val)
     def do_archivos(self,linea):
-        if self.currdir:
-            dir_ = self.currdir
-        else:
-            dir_ = ''
         print('\n'.join(sorted(glob("*.hai"))))
     def complete_hai(self, text, line, begidx, endidx):
         return [x for x in sorted(glob("*.hai")) if text in x]
+    @property
+    def currdir(self):
+        return self._currdir if self._currdir else path.realpath('')
 if __name__=='__main__':
     main()
