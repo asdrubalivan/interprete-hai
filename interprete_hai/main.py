@@ -59,19 +59,26 @@ class ComandosInterprete(Cmd):
                 print("Error: {e}".format(e=e))
     def help_hai(self):
         print('\n'.join(("Lee y ejecuta un archivo","Se ejecuta de la forma","hai [archivo]")))
+    def help_salir(self):
+        print("Sale de la línea de comandos")
+    def help_archivos(self):
+        print("Lista los archivos en el directorio en el que se está trabajando, en este caso {d}".format(d=self.currdir if self.currdir else path.realpath("")))
+    def help_cd(self):
+        print("Cambia el directorio de trabajo al especificado en el comando, por ejemplo para cambiar al directorio actual se escribiría\ncd {}".format(self.currdir if self.currdir else path.realpath("")))
     def do_salir(self,linea):
         sys.exit(0)
     def do_cd(self,dir_):
         if not dir_:
             self.currdir = path.realpath("")
-            return
-        if path.isdir(dir_):
-            temp = path.realpath(dir_)
-            chdir(temp)
-            self.currdir = temp
-            print("Directorio actual cambiado a {dir_}".format(dir_=temp))
+            print("Directorio cambiado a ubicación original {}".format(self.currdir))
         else:
-            print("\"{dir_}\" no es un directorio".format(dir_=dir_))
+            if path.isdir(dir_):
+                temp = path.realpath(dir_)
+                chdir(temp)
+                self.currdir = temp
+                print("Directorio actual cambiado a {dir_}".format(dir_=temp))
+            else:
+                print("\"{dir_}\" no es un directorio".format(dir_=dir_))
     def complete_cd(self, text, line, begidx, endidx):
         ret_val = [x for x in listdir() if path.isdir(x) and text in x]
         if not re.match('^\w+$',text) or not ret_val:
