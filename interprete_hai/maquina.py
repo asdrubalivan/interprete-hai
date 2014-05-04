@@ -79,8 +79,11 @@ class Simbolo(object):
             logger.warning("Valor no definido")
             raise SimboloError("No inicializado {valores}".format(valores=val_corchetes))
     def asignar(self,valor,posicion=None,asignador="="):
-        logger.debug("Tratando de asignar {v} con asignador {a}".format(v=valor,a=asignador))
+        logger.debug("Tratando de asignar a '{nombre}' -> {v} con asignador {a}".format(v=valor,a=asignador,nombre=self.nombre))
         if is_literal(valor):
+            if self.tam_vec and not posicion:
+                logger.error("Tratando de asignar escalar {e} a vector de tamaño {t}".format(e=valor,t=self.tam_vec))
+                raise RuntimeError("Tratando de asignar escalar a vector")
             tipo_sin_br = strip_del_brackets(self.tipo)
             #NOTE: Se coloca Try ya que quiero que en dado caso se dispare la
             #bandera de que tipos no concuerdan, para dar un mensaje al usuario
@@ -122,6 +125,8 @@ class Simbolo(object):
                 logger.warning("Error, tipo invalido {t}".format(t=tipo(valor)))
                 raise SimboloError("Tipo invalido {t}".format(t=tipo(valor)))
         else:
+            if not self.tam_vec:
+                raise RuntimeError("Tratando de asignar vector a escalar")
             tipos = set(tipo(v) for v in valor.values())
             if len(tipos) <= 1 and all(self.esta_en_limites(p) for p in valor.keys()):
                 logger.debug("Asignando vector {}".format(valor))

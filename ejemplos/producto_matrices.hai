@@ -1,0 +1,30 @@
+Programa: Funcion
+Variables:
+Real m1[5],m2[5],res[5][5],res2[5][5];
+Entero x;
+Algoritmo:
+    res = producto_matrices();
+    res2 = res;
+    Repitapara x=0,x<5,x+=1:
+        Escribir res2[x][x];
+        Escribir "\n";
+    Finrp
+    
+Finalgoritmo
+Finprograma
+
+Subprograma: Real[][] producto_matrices()
+Variables:
+Real res[5][5];
+Entero x;
+Algoritmo:
+    Repitapara x=0,x<5,x+=1:
+        res[x][x] = x + 1.4 * x + 3;
+    Finrp
+    Repitapara x=0,x<5,x+=1:
+        Escribir res[x][x];
+        Escribir "\n";
+    Finrp
+    Retorne res;
+Finalgoritmo
+Finsubprograma

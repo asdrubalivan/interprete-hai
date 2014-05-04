@@ -17,6 +17,9 @@ from nodos import (BinOpNodo, LlamadaFuncNodo, AsigNodo, RetornoNodo,
         AlgoritmoSubNodo, LiteralNodo, DummyNodo, VariableNodo,
         FinLineaNodo, UminusNodo)
 
+class ParseError(Exception):
+    pass
+
 DEBUG_PARSER = True
 
 tokens = clex.tokens
@@ -27,7 +30,7 @@ precedence = (
     ('left', 'NOT','LT','GT','LE','GE','EQ','NE'),
     ('left', 'PLUS', 'MINUS'),
     ('left', 'TIMES', 'DIVIDE','MOD'),
-    ('right','UMINUS'),
+    ('right','UMINUS','NOT'),
 )
 
 
@@ -123,8 +126,6 @@ def p_declvariables_empty(t):
 def p_listadecl(t):
     ''' listadecl : tipo listaids SEMI '''
     if t[2]:
-        #FIXME Aqui hay un problema NUMERO --> N U M E R O
-        #En caso de que sea lista hacer algo, y en caso de que no hacer otro
         logger.debug("listadecl : tipo listaids SEMI Tipo de t[2] es {t}".format(t=type(t[2])))
         if is_sequence(t[2]):
             l = []
@@ -474,7 +475,7 @@ def p_empty(t):
 
 #Error
 def p_error(t):
-    print("Error")
+    raise ParseError("Caracter invalido '{c}' en linea {line}".format(c=t.value,line=t.lineno))
 
 yacc.yacc(check_recursion=1,optimize=0,debug=DEBUG_PARSER)
 

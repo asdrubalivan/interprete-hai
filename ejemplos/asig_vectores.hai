@@ -1,6 +1,7 @@
 Programa: Repitam
 Variables:
     Entero val[3][2],val2[3][2];
+    Real vector[3],valor;
     Entero i;
 Algoritmo:
     i = 0;
@@ -16,5 +17,6 @@ Algoritmo:
         Escribir val2[i][i];
         i = i + 1;
     Finrm
+    valor = 3.3;
 Finalgoritmo
 Finprograma

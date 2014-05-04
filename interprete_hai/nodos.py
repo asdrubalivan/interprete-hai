@@ -2,7 +2,7 @@
 # coding: utf-8
 from abc import ABCMeta, abstractmethod, abstractproperty
 from maquina import Maquina, Simbolo, DummyError
-from utils import delete_brackets, val_input, is_sequence, is_num, get_decl_total
+from utils import delete_brackets, val_input, is_sequence, is_num, get_decl_total, count_brackets
 import re
 from itertools import repeat
 import logging
@@ -372,8 +372,13 @@ class BloqueRpNodo(Nodo):
             logger.debug("Evaluando expresion de incremento en Repita para")
             self.expr_incr.evaluar(maquina)
 class NegacionNodo(Nodo):
-    def colocar_tipo(self):
-        self.tipo = NEGACION
+    @property
+    def expr(self):
+        return self.hijos[0]
+    def evaluar(self,maquina):
+        logger.debug("Uminus Nodo")
+        self.expr.evaluar(maquina)
+        maquina.push_resultado(int(not maquina.pop_resultado()))
 
 class VoidNodo(Nodo):
     def colocar_tipo(self):
@@ -490,9 +495,15 @@ class SubprogramaNodo(ProgramaBaseNodo):
             nombre_aux = formato_aux.format(x)
             x = x + 1
         if self.tipo_retorno:
+            cuenta_corchetes = count_brackets(self.tipo_retorno.tipovar)
+            if not cuenta_corchetes:
+                tam_nodo = None
+            else:
+                tam_nodo = tuple(repeat(None,cuenta_corchetes))
             #Usamos declaracion nodo ya que estamos simulando
             #la declaracion de una variable
             self.variable_retorno = DeclaracionNodo(get_decl_total(self.tipo_retorno.tipovar,nombre_aux),hoja=nombre_aux)
+            logger.debug("Tipo de retorno es : {} ".format(self.tipo_retorno))
             logger.debug("Variable retorno {}".format(self.variable_retorno))
             self.variable_retorno.evaluar(maquina)
         valores_pila = maquina.pop_pila_func()
