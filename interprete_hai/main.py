@@ -40,8 +40,11 @@ def main():
         ComandosInterprete().cmdloop()
 
 def evaluar(archivo):
-    m = maquina.Maquina(nodos_desde_arch(archivo))
-    m.evaluar_raices()
+    try:
+        m = maquina.Maquina(nodos_desde_arch(archivo))
+        m.evaluar_raices()
+    except Exception as e:
+        print("Error: {e}".format(e=e))
 
 class ComandosInterprete(Cmd):
     prompt = "HAI> "
@@ -61,10 +64,7 @@ class ComandosInterprete(Cmd):
         if not archivo:
             print("No se incluyo archivo, el mismo es obligatorio")
         else:
-            try:
-                evaluar(archivo)
-            except Exception as e:
-                print("Error: {e}".format(e=e))
+            evaluar(archivo)
     def help_hai(self):
         print('\n'.join(("Lee y ejecuta un archivo","Se ejecuta de la forma","hai [archivo]")))
     def help_salir(self):
