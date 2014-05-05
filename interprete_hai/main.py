@@ -35,6 +35,7 @@ def main():
     args = parser.parse_args()
     if args.archivo:
         evaluar(args.archivo)
+        input("Presione enter para finalizar...")
     else:
         ComandosInterprete().cmdloop()
 

@@ -20,14 +20,14 @@ from nodos import (BinOpNodo, LlamadaFuncNodo, AsigNodo, RetornoNodo,
 class ParseError(Exception):
     pass
 
-DEBUG_PARSER = True
+DEBUG_PARSER = False
 
 tokens = clex.tokens
 
 precedence = (
     ('left','OR'),
     ('left','AND'),
-    ('left', 'NOT','LT','GT','LE','GE','EQ','NE'),
+    ('left','LT','GT','LE','GE','EQ','NE'),
     ('left', 'PLUS', 'MINUS'),
     ('left', 'TIMES', 'DIVIDE','MOD'),
     ('right','UMINUS','NOT'),
@@ -477,14 +477,15 @@ def p_empty(t):
 def p_error(t):
     raise ParseError("Caracter invalido '{c}' en linea {line}".format(c=t.value,line=t.lineno))
 
-yacc.yacc(check_recursion=1,optimize=0,debug=DEBUG_PARSER)
+repr(logger)
+yacc.yacc(check_recursion=1,optimize=0,debug=logger,write_tables=0,start="raiz",errorlog=yacc.NullLogger())
 
 
 def parse_text(txt):
-    return yacc.parse(txt,debug=DEBUG_PARSER)
+    return yacc.parse(txt,debug=logger)
 
 if __name__=='__main__':
     import sys
     from pprint import pprint
     txt = '\n'.join([t for t in sys.stdin])
-    x=yacc.parse(txt,debug=DEBUG_PARSER)
+    x=yacc.parse(txt,debug=yacc.NullLogger())

@@ -14,6 +14,11 @@ build_exe_options = {
             'nodos',
             'logconfig',
             'settings',
+            're',
+            'glob',
+            'sys',
+            'pprint',
+            'argparse',
             ],
         'include_files':[
             '../LICENSE'

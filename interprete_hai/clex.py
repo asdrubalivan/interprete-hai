@@ -6,6 +6,10 @@
 # http://www.juanjoconti.com.ar/files/python/ply-examples/ansic/clex.py.html
 # ----------------------------------------------------------------------
 import ply.lex as lex
+import logging
+import logconfig
+logger = logging.getLogger(__name__)
+
 
 states = (
         ('slashcomment','exclusive'),
@@ -194,6 +198,6 @@ t_EQUALS = r'='
 t_PLUSEQUALS = r'\+='
 t_LESSEQUALS = r'\-='
 
-lexer = lex.lex(optimize=1)
+lexer = lex.lex(optimize=0,errorlog=lex.NullLogger())
 if __name__=="__main__":
     lex.runmain(lexer)
