@@ -199,5 +199,6 @@ t_PLUSEQUALS = r'\+='
 t_LESSEQUALS = r'\-='
 
 lexer = lex.lex(optimize=0,errorlog=lex.NullLogger())
+lexer.lineno = 0
 if __name__=="__main__":
     lex.runmain(lexer)

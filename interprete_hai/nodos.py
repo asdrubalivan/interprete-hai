@@ -270,7 +270,10 @@ class LeerNodo(Nodo):
         return self.hijos[0]
     def evaluar(self,maquina):
         logger.debug("Leyendo variable {v}".format(v=self.variable))
-        l = val_input()
+        while True:
+            l = val_input()
+            if l:
+                break
         logger.debug("Variable es {v}".format(v=l))
         maquina.asignar(self.variable,l)
 

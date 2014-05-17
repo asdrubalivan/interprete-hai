@@ -1,0 +1,13 @@
+Programa: ImprimirNumeros
+Variables:
+Entero i;
+Algoritmo:
+Leer i;
+Haga:
+    Escribir i;
+    Finlinea;
+    i+=1;
+Mientras(i < 40)
+
+Finalgoritmo
+Finprograma

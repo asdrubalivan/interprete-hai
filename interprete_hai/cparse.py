@@ -22,6 +22,8 @@ class ParseError(Exception):
 
 DEBUG_PARSER = False
 
+suma_lineas = 0
+
 tokens = clex.tokens
 
 precedence = (
@@ -32,7 +34,6 @@ precedence = (
     ('left', 'TIMES', 'DIVIDE','MOD'),
     ('right','UMINUS','NOT'),
 )
-
 
 def p_raiz(t):
     ''' raiz : programa
@@ -475,14 +476,25 @@ def p_empty(t):
 
 #Error
 def p_error(t):
-    raise ParseError("Caracter invalido '{c}' en linea {line}".format(c=t.value,line=t.lineno))
+    i = 0
+    cad = ''
+    while True:
+        tok = yacc.token()
+        if not tok or not i < 5:
+            break
+        i += 1
+        cad += str(tok.value) + " "
+    mensaje_error = "Caracter invalido '{c}' cerca de {cad}".format(c=t.value,cad=cad) #Esto se hace ya que el parser sigue incrementando lineno
+    raise ParseError(mensaje_error)
 
-repr(logger)
-yacc.yacc(check_recursion=1,optimize=0,debug=logger,write_tables=0,start="raiz",errorlog=yacc.NullLogger())
+def init_yacc():
+    yacc.yacc(check_recursion=1,optimize=0,debug=logger,write_tables=0,start="raiz",errorlog=yacc.NullLogger())
 
+init_yacc()
 
 def parse_text(txt):
-    return yacc.parse(txt,debug=logger)
+    ret_val = yacc.parse(txt,debug=logger)
+    return ret_val
 
 if __name__=='__main__':
     import sys

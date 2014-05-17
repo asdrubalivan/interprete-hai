@@ -1,0 +1,18 @@
+Programa: ImprimirNumeros
+Variables:
+Entero i;
+Algoritmo:
+
+i = 0;
+Repitamientras i < 100:
+    Escribir i;
+    Escribir " ";
+    Si i % 7 == 0 Entonces
+        Escribir "El numero es divisible entre siete\n";
+    Contrario
+        Finlinea;
+    Finsi
+    i+=1;
+Finrm
+Finalgoritmo
+Finprograma

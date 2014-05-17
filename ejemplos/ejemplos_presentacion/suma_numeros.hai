@@ -1,0 +1,17 @@
+Programa: Suma_numeros
+Variables:
+Entero suma, i, valor;
+Algoritmo:
+Escribir "Indique valor maximo a calcular: ";
+Leer valor;
+suma = 0;
+Repitapara i = 0, i <= valor, i += 1:
+    Si (i % 3) == 0 || (i % 5) == 0 || (i % 7) == 1 Entonces
+        suma += i;
+    Finsi
+Finrp
+Escribir "El valor de la suma es ";
+Escribir suma;
+Finlinea;
+Finalgoritmo
+Finprograma

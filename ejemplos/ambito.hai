@@ -1,0 +1,22 @@
+Programa: Ambito
+Variables:
+    Entero var;
+Algoritmo:
+    var = 3;
+    Escribir var;
+    Finlinea;
+    un_subprograma();
+    Escribir var;
+    Finlinea;
+Finalgoritmo
+Finprograma
+
+Subprograma: un_subprograma()
+Variables:
+    Entero var;
+Algoritmo:
+    var = 2;
+    Escribir var;
+    Finlinea;
+Finalgoritmo
+Finsubprograma
