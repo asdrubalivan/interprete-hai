@@ -243,6 +243,7 @@ def p_sentencia(t):
     ''' sentencia : asignacion
                   | senleer
                   | senescribir
+                  | retorno
     '''
     t[0] = t[1]
     logger.debug("Sentencia (asignacion, senleer, senescribir): {t0}".format(t0=t[0]))
@@ -351,7 +352,6 @@ def p_expression_unvalor(t):
                   | idvariable
                   | llamadafunc
                   | operacionbin
-                  | retorno
     '''
     t[0] = t[1]
     logger.debug("Expresion con variable {t0}".format(t0=t[0]))
