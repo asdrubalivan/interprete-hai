@@ -505,7 +505,7 @@ class SubprogramaNodo(ProgramaBaseNodo):
                 tam_nodo = tuple(repeat(None,cuenta_corchetes))
             #Usamos declaracion nodo ya que estamos simulando
             #la declaracion de una variable
-            self.variable_retorno = DeclaracionNodo(get_decl_total(self.tipo_retorno.tipovar,nombre_aux),hoja=nombre_aux)
+            self.variable_retorno = DeclaracionNodo(get_decl_total(self.tipo_retorno.tipovar,nombre_aux),hoja=nombre_aux,tam_nodo=tam_nodo)
             logger.debug("Tipo de retorno es : {} ".format(self.tipo_retorno))
             logger.debug("Variable retorno {}".format(self.variable_retorno))
             self.variable_retorno.evaluar(maquina)

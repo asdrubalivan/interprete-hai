@@ -1,0 +1,64 @@
+Programa: Fact_Iter_Rec
+Algoritmo:
+    menu();
+Finalgoritmo
+Finprograma
+
+Subprograma: Entero menu()
+Variables:
+    Entero val, fact_a_calc,val_fact;
+    Entero FACT_REC, FACT_ITER; //Constantes
+Algoritmo:
+    /*
+    * Se definen constantes
+    */
+    FACT_ITER = 1;
+    FACT_REC = 2;
+    Repitamientras 1:
+        Escribir "Factorial iterativo opcion 1, factorial recursivo 2, salir otro\n";
+        Leer val;
+        Si (val == FACT_ITER) Entonces
+            Escribir "Valor a calcular usando factorial iterativo: ";
+            Leer fact_a_calc;
+            val_fact = factorial_iter(fact_a_calc);
+            Escribir "El valor calculado es ";
+            Escribir val_fact;
+            Finlinea;
+        Contrario
+            Si (val == FACT_REC) Entonces
+                Escribir "Valor a calcular usando factorial recursivo: ";
+                Leer fact_a_calc;
+                val_fact = factorial_rec(fact_a_calc);
+                Escribir "El valor calculado es ";
+                Escribir val_fact;
+                Finlinea;
+            Contrario
+                Retorne 0;//Salir de la funcion
+            Finsi
+        Finsi
+    Finrm
+Finalgoritmo
+Finsubprograma
+
+Subprograma: Entero factorial_iter(Entero val)
+Variables:
+    Entero fact, i;
+Algoritmo:
+    fact = 1;
+    i = 1;
+    Haga:
+        fact = fact * i;
+        i += 1;
+    Mientras(i <= val)
+    Retorne fact;
+Finalgoritmo
+Finsubprograma
+
+Subprograma: Entero factorial_rec(Entero val)
+Algoritmo:
+    Si val <= 1 Entonces
+        Retorne 1;
+    Finsi
+    Retorne val * factorial_rec(val - 1);
+Finalgoritmo
+Finsubprograma

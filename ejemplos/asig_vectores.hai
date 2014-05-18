@@ -1,22 +1,29 @@
-Programa: Repitam
+Programa: Asig_vectores
 Variables:
-    Entero val[3][2],val2[3][2];
-    Real vector[3],valor;
-    Entero i;
+    Entero vec[10],i;
 Algoritmo:
-    i = 0;
-    Repitamientras i < 3:
-        val[i][0] = i;
-        Escribir val[i][0];
-        i = i + 1;
-    Finrm
-    val2 = val;
-    i = 0;
-    val2[1][1] = 5;
-    Repitamientras i < 2:
-        Escribir val2[i][i];
-        i = i + 1;
-    Finrm
-    valor = 3.3;
+    Repitapara i = 0, i < 10, i+=1:
+        vec[i] = 10 - i;
+    Finrp
+    Repitapara i = 0, i < 10, i+=1:
+        Escribir vec[i];
+        Finlinea;    
+    Finrp
+    vec = nuevo_vec();
+    Repitapara i = 0, i < 10, i+=1:
+        Escribir vec[i];
+        Finlinea;    
+    Finrp
 Finalgoritmo
 Finprograma
+
+Subprograma: Entero[] nuevo_vec()
+Variables:
+    Entero i,vec[10];
+Algoritmo:
+    Repitapara i = 0, i < 10, i += 1:
+        vec[i] = i;
+    Finrp
+    Retorne vec;
+Finalgoritmo
+Finsubprograma

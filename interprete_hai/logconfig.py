@@ -17,7 +17,7 @@ logging.config.dictConfig({
     },
     'handlers': {
         'default': {
-            'level':'ERROR',    
+            'level':'DEBUG',    
             'class':'logging.handlers.RotatingFileHandler',
             'filename':'log.log',
             'formatter':'standard',
@@ -27,8 +27,8 @@ logging.config.dictConfig({
     },
     'loggers': {
         '': {                  
-            #'handlers': ['default'],        
-            'level': 'ERROR',  
+            'handlers': ['default'],        
+            'level': 'DEBUG',  
             'propagate': True
         }
     }
