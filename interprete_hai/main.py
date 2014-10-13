@@ -40,6 +40,7 @@ def main():
         ComandosInterprete().cmdloop()
 
 def evaluar(archivo):
+    print("Evaluando archivo: {}".format(archivo))
     try:
         m = maquina.Maquina(nodos_desde_arch(archivo))
         m.evaluar_raices()
@@ -94,6 +95,8 @@ class ComandosInterprete(Cmd):
         return sorted(ret_val)
     def do_archivos(self,linea):
         print('\n'.join(sorted(glob("*.hai"))))
+    def do_EOF(self,linea):
+        return True
     def complete_hai(self, text, line, begidx, endidx):
         return [x for x in sorted(glob("*.hai")) if text in x]
     @property
