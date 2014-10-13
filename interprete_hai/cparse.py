@@ -20,7 +20,7 @@ from nodos import (BinOpNodo, LlamadaFuncNodo, AsigNodo, RetornoNodo,
 class ParseError(Exception):
     pass
 
-DEBUG_PARSER = False
+DEBUG_PARSER = True
 
 suma_lineas = 0
 
@@ -488,7 +488,7 @@ def p_error(t):
     raise ParseError(mensaje_error)
 
 def init_yacc():
-    yacc.yacc(check_recursion=1,optimize=0,debug=logger,write_tables=0,start="raiz",errorlog=yacc.NullLogger())
+    yacc.yacc(check_recursion=1,optimize=0,debug=True,write_tables=0,start="raiz")
 
 init_yacc()
 

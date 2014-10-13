@@ -8,6 +8,7 @@
 import ply.lex as lex
 import logging
 import logconfig
+import sys
 logger = logging.getLogger(__name__)
 
 
@@ -104,7 +105,7 @@ def t_NEWLINE(t):
     t.lexer.lineno += t.value.count("\n")
 
 def t_error(t):
-    print("Caracter ilegal en {}".format(t.value[0]))
+    print("Caracter ilegal {}".format(t.value[0]))
     t.lexer.skip(1)
 
 def t_comment(t):
@@ -198,7 +199,7 @@ t_EQUALS = r'='
 t_PLUSEQUALS = r'\+='
 t_LESSEQUALS = r'\-='
 
-lexer = lex.lex(optimize=0,errorlog=lex.NullLogger())
+lexer = lex.lex(optimize=0)
 lexer.lineno = 0
 if __name__=="__main__":
     lex.runmain(lexer)

@@ -272,7 +272,8 @@ class LeerNodo(Nodo):
         logger.debug("Leyendo variable {v}".format(v=self.variable))
         while True:
             l = val_input()
-            if l:
+            logger.debug("Val input es {}".format(l))
+            if l is not None and str(l).strip():
                 break
         logger.debug("Variable es {v}".format(v=l))
         maquina.asignar(self.variable,l)
