@@ -1,0 +1,10 @@
+Programa: RepitaPara
+Variables:
+    Entero x;
+Algoritmo:
+    Repitapara x = 0 , x % 10 < 6, x += 1:
+        Escribir x;
+        Finlinea;
+    Finrp
+Finalgoritmo
+Finprograma
