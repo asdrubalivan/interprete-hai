@@ -97,7 +97,8 @@ class Simbolo(object):
                     valor = float(valor)
                 except:
                     pass
-            if tipo(valor) == tipo_sin_br:
+            t_valor = tipo(valor)
+            if t_valor == tipo_sin_br or tipo_sin_br == CARACTER:
                 logger.debug("Tipos concuerdan")
                 if posicion:
                     if self.esta_en_limites(posicion):

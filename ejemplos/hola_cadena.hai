@@ -1,0 +1,8 @@
+Programa: HolaMundo
+Variables:
+    Caracter cadena;
+Algoritmo:
+    Leer cadena;
+    Escribir cadena;
+Finalgoritmo
+Finprograma
