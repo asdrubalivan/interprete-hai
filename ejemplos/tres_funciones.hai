@@ -1,0 +1,26 @@
+Programa: main
+Algoritmo:
+    p_1();
+    p_2();
+    p_3();
+Finalgoritmo
+Finprograma
+
+Subprograma: p_1()
+Algoritmo:
+    Escribir "p_1";
+Finalgoritmo
+Finsubprograma
+
+Subprograma: p_2()
+Algoritmo:
+    Escribir "p_2";
+Finalgoritmo
+Finsubprograma
+
+Subprograma: p_3()
+Algoritmo:
+    Escribir "p_3";
+Finalgoritmo
+Finsubprograma
+
