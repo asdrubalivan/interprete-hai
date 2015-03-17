@@ -25,7 +25,7 @@ class Simbolo(object):
         self.nombre = strip_del_brackets(nombre)
         self.tam_vec = tam_vec
         if not self.tam_vec:
-            self.valor = None #TODO Inicializar vectores en caso de no existir
+            self.valor = None
         else:
             self.valor = {}
         self.tipo = tipo

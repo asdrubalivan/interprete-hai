@@ -115,7 +115,6 @@ class BinOpNodo(Nodo):
         return self.hijos[1]
     def evaluar(self,maquina):
         if isinstance(self.izquierda,str):
-            #TODO Revisar si este instanceof es necesario
             logger.debug("Buscamos valor de variable {var}".format(var=self.izquierda))
             r_izq = maquina.obtener_valor_maq(self.izquierda)
             logger.debug("Valor de r_izq es {}".format(r_izq))
@@ -204,7 +203,7 @@ class LlamadaFuncNodo(Nodo):
             return []
         return self.hijos[0]
     def evaluar(self,maquina):
-        logger.debug("Llamando a funcion {n}".format(n=self.nombre))#TODO Poner nombre de la funcion
+        logger.debug("Llamando a funcion {n}".format(n=self.nombre))
         logger.debug("Parametros {p}".format(p=self.params))
         val_exp = []
         for val in self.params:
@@ -430,7 +429,6 @@ class ProgramaBaseNodo(Nodo):
     def id(self):
         return self.hoja
 
-#TODO Colocar progvariables como abstracta (Sera necesario?)
 class ProgramaNodo(ProgramaBaseNodo):
     @property
     def progvariables(self):
@@ -482,7 +480,7 @@ class SubprogramaNodo(ProgramaBaseNodo):
     def nombre(self):
         return self.hoja
     def evaluar(self,maquina):
-        logger.debug("Colocando push_scope en Subprogramanodo")#TODO poner el id
+        logger.debug("Colocando push_scope en Subprogramanodo")
         maquina.push_scope()
         logger.debug("Colocando argumentos")
         logger.debug("Argumentos son: {arg}".format(arg=self.args))

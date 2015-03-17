@@ -30,12 +30,12 @@ if system() == "Windows":
     build_exe_options["includes"].append("pyreadline")
     build_exe_options["include_msvcr"] = True
         
-setup(  name = "Interprete Hai",
+setup(  name = "Compilador Hai",
         version = "1.0",
-        description = "Interprete del lenguaje de Programación Hai",
+        description = "Compilador del lenguaje de Programación Hai",
         author = "Asdrúbal Iván Suárez Rivera",
         author_email = "asdrubal.ivan.suarez.rivera@gmail.com",
         options = {"build_exe": build_exe_options},
         executables = [Executable("main.py",
-            shortcutName="Interprete Hai",
+            shortcutName="Compilador Hai",
             shortcutDir="DesktopFolder",)])

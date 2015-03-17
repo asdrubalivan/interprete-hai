@@ -11,7 +11,6 @@ ENTERO = "Entero"
 REAL = "Real"
 CARACTER = "Caracter"
 
-#TODO Cambiar esta regex para colocar tambier palabras, sin embargo hay que ver si sera necesario
 REGEX_BRACKETS = r"\[(\d+|[A-Za-z_]+)?\]"
 REGEX_BRACKETS_ID = r'\[(?P<ids>(\d+|[A-Za-z_]+))\]'
 REGEX_CAPTURE = r'(\[(?P<num>\d+)\])'

@@ -123,7 +123,6 @@ def p_declvariables_empty(t):
     ''' declvariables : empty '''
     logger.debug("declvariables vacio")
 
-#TODO Anotar en las declaraciones el limite de caracteres de cada variable
 def p_listadecl(t):
     ''' listadecl : tipo listaids SEMI '''
     if t[2]:
